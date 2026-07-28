@@ -1,0 +1,349 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block page_title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Welcome -->
+
+    <div class="row mb-4">
+
+        <div class="col-12">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h3 class="mb-1">
+
+                        Welcome, {{ request.user.first_name }}
+
+                    </h3>
+
+                    <p class="text-muted mb-0">
+
+                        AI Lab Attendance Management System
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Statistics -->
+
+    <div class="row">
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm text-center h-100">
+
+                <div class="card-body">
+
+                    <i class="bi bi-people-fill display-5 text-primary"></i>
+
+                    <h5 class="mt-3">
+
+                        Students
+
+                    </h5>
+
+                    <h2>
+
+                        {{ total_students }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm text-center h-100">
+
+                <div class="card-body">
+
+                    <i class="bi bi-collection-fill display-5 text-success"></i>
+
+                    <h5 class="mt-3">
+
+                        Active Batches
+
+                    </h5>
+
+                    <h2>
+
+                        {{ active_batches }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm text-center h-100">
+
+                <div class="card-body">
+
+                    {% if is_admin %}
+
+                        <i class="bi bi-person-workspace display-5 text-warning"></i>
+
+                        <h5 class="mt-3">
+                            Trainers
+                        </h5>
+
+                        <h2>
+                            {{ total_trainers }}
+                        </h2>
+
+                    {% else %}
+
+                        <i class="bi bi-graph-up-arrow display-5 text-info"></i>
+
+                        <h5 class="mt-3">
+                            Overall Attendance
+                        </h5>
+
+                        <h2>
+                            {{ overall_attendance }}%
+                        </h2>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3 mb-4">
+
+            <div class="card shadow-sm text-center h-100">
+
+                <div class="card-body">
+
+                    <i class="bi bi-check-circle-fill display-5 text-danger"></i>
+
+                    <h5 class="mt-3">
+
+                        Today's Attendance
+
+                    </h5>
+
+                    <h2>
+
+                        {{ today_attendance }}
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Recent Batches -->
+
+    <div class="row">
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+
+                        Recent Batches
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>Batch</th>
+
+                            <th>Trainer</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for batch in recent_batches %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ batch.batch_code }}
+
+                            </td>
+
+                            <td>
+
+                                {{ batch.trainer.get_full_name }}
+
+                            </td>
+
+                            <td>
+
+                                <span class="badge bg-success">
+
+                                    {{ batch.status }}
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="3" class="text-center">
+
+                                No batches available.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Recent Students -->
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header">
+
+                    <h5 class="mb-0">
+
+                        Recent Students
+
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Batch</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                        {% for student in recent_students %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ student.first_name }} {{ student.last_name }}
+
+                            </td>
+
+                            <td>
+
+                                {{ student.batch.batch_code }}
+
+                            </td>
+
+                            <td>
+
+                                <span class="badge bg-primary">
+
+                                    {{ student.status }}
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="3" class="text-center">
+
+                                No students available.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

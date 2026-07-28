@@ -1,0 +1,237 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block page_title %}
+My Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <!-- Left Profile Card -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                {% if user.avatar %}
+
+                    <img src="{{ user.avatar.url }}"
+                         class="profile-image mb-3"
+                         id="profile-preview">
+
+                {% else %}
+
+                    <img src="{% static 'images/default-user.png' %}"
+                         class="profile-image mb-3"
+                         id="profile-preview">
+
+                {% endif %}
+
+                <h4 class="mb-1">
+
+                    {{ user.get_full_name }}
+
+                </h4>
+
+                <p class="text-muted">
+
+                    {{ user.get_role_display }}
+
+                </p>
+
+                {% if user.is_active %}
+
+                    <span class="badge bg-success">
+
+                        Active
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-danger">
+
+                        Inactive
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Right Form -->
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+
+                <h5 class="mb-0">
+
+                    Update Profile
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <form method="post"
+                      enctype="multipart/form-data">
+
+                    {% csrf_token %}
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                First Name
+
+                            </label>
+
+                            {{ form.first_name }}
+
+                            {{ form.first_name.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Last Name
+
+                            </label>
+
+                            {{ form.last_name }}
+
+                            {{ form.last_name.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Username
+
+                            </label>
+
+                            {{ form.username }}
+
+                            {{ form.username.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Email
+
+                            </label>
+
+                            {{ form.email }}
+
+                            {{ form.email.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Phone Number
+
+                        </label>
+
+                        {{ form.phone }}
+
+                        {{ form.phone.errors }}
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+
+                            Profile Image
+
+                        </label>
+
+                        {{ form.avatar }}
+
+                        {{ form.avatar.errors }}
+
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            Update Profile
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+
+const imageInput = document.getElementById("id_profile_image");
+
+if(imageInput){
+
+    imageInput.addEventListener("change",function(){
+
+        if(this.files.length>0){
+
+            document.getElementById("profile-preview").src=
+                URL.createObjectURL(this.files[0]);
+
+        }
+
+    });
+
+}
+
+</script>
+
+{% endblock %}

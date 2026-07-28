@@ -1,0 +1,325 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Student History
+{% endblock %}
+
+{% block page_title %}
+Student Attendance History
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form method="get">
+
+            <div class="row align-items-end">
+
+                <div class="col-md-10">
+
+                    <label class="form-label">
+
+                        Student
+
+                    </label>
+
+                    <select name="student"
+                            class="form-select">
+
+                        <option value="">
+
+                            Select Student
+
+                        </option>
+
+                        {% for student in students %}
+
+                        <option value="{{ student.id }}"
+
+                        {% if selected_student.id == student.id %}
+
+                        selected
+
+                        {% endif %}>
+
+                            {{ student.first_name }}
+                            {{ student.last_name }}
+                            -
+                            {{ student.batch.batch_code }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn btn-primary w-100">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% if selected_student %}
+
+<div class="row mb-4">
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6>Present</h6>
+
+                <h2>{{ present }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6>Late</h6>
+
+                <h2>{{ late }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6>Absent</h6>
+
+                <h2>{{ absent }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                <h6>Attendance %</h6>
+
+                <h2>{{ percentage }}%</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            Student Details
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-3 text-center">
+
+                <img src="{{ selected_student.photo.url }}"
+                     class="img-fluid rounded-circle border"
+                     width="150">
+
+            </div>
+
+            <div class="col-md-9">
+
+                <table class="table">
+
+                    <tr>
+
+                        <th>Name</th>
+
+                        <td>
+
+                            {{ selected_student.first_name }}
+                            {{ selected_student.last_name }}
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Batch</th>
+
+                        <td>
+
+                            {{ selected_student.batch.name }}
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Email</th>
+
+                        <td>
+
+                            {{ selected_student.email }}
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <th>Phone</th>
+
+                        <td>
+
+                            {{ selected_student.phone }}
+
+                        </td>
+
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            Attendance History
+
+        </h5>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-striped mb-0">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Date</th>
+
+                    <th>Time</th>
+
+                    <th>Status</th>
+
+                    <th>Confidence</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for record in history %}
+
+                <tr>
+
+                    <td>
+
+                        {{ record.attendance_date }}
+
+                    </td>
+
+                    <td>
+
+                        {{ record.attendance_time }}
+
+                    </td>
+
+                    <td>
+
+                        {{ record.get_status_display }}
+
+                    </td>
+
+                    <td>
+
+                        {{ record.confidence_score }}%
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4"
+                        class="text-center">
+
+                        No attendance records found.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

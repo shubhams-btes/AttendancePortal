@@ -1,0 +1,200 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Edit Student
+{% endblock %}
+
+{% block page_title %}
+Edit Student
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+
+                <h5 class="mb-0">
+
+                    Edit Student
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Batch
+
+                            </label>
+
+                            {{ form.batch }}
+
+                            {{ form.batch.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Status
+
+                            </label>
+
+                            {{ form.status }}
+
+                            {{ form.status.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                First Name
+
+                            </label>
+
+                            {{ form.first_name }}
+
+                            {{ form.first_name.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Last Name
+
+                            </label>
+
+                            {{ form.last_name }}
+
+                            {{ form.last_name.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Email
+
+                            </label>
+
+                            {{ form.email }}
+
+                            {{ form.email.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Phone
+
+                            </label>
+
+                            {{ form.phone }}
+
+                            {{ form.phone.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Degree
+
+                        </label>
+
+                        {{ form.degree }}
+
+                        {{ form.degree.errors }}
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+
+                            Address
+
+                        </label>
+
+                        {{ form.address }}
+
+                        {{ form.address.errors }}
+
+                    </div>
+
+                    <div class="alert alert-warning">
+
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+
+                        The student's face image cannot be edited from this page.
+                        Updating the face image requires regenerating the AI face embedding and will be available in a separate "Update Face Profile" screen.
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <a href="{% url 'students:student_list' %}"
+                           class="btn btn-secondary">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Back
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            Update Student
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

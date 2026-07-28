@@ -1,0 +1,364 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Batch Attendance
+{% endblock %}
+
+{% block page_title %}
+Batch Attendance Report
+{% endblock %}
+
+{% block content %}
+
+<!-- Summary Cards -->
+
+<div class="row mb-4">
+
+    <div class="col-md-2">
+
+        <div class="card shadow-sm border-start border-4 border-primary">
+
+            <div class="card-body text-center">
+
+                <h6>Total Students</h6>
+
+                <h3>{{ total }}</h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-2">
+
+        <div class="card shadow-sm border-start border-4 border-success">
+
+            <div class="card-body text-center">
+
+                <h6>Present</h6>
+
+                <h3>{{ present }}</h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-2">
+
+        <div class="card shadow-sm border-start border-4 border-warning">
+
+            <div class="card-body text-center">
+
+                <h6>Late</h6>
+
+                <h3>{{ late }}</h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-2">
+
+        <div class="card shadow-sm border-start border-4 border-danger">
+
+            <div class="card-body text-center">
+
+                <h6>Absent</h6>
+
+                <h3>{{ absent }}</h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card shadow-sm border-start border-4 border-info">
+
+            <div class="card-body text-center">
+
+                <h6>Attendance %</h6>
+
+                <h3>{{ percentage }}%</h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Filters -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form method="get">
+
+            <div class="row align-items-end">
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+
+                        Date
+
+                    </label>
+
+                    <input
+                        type="date"
+                        name="date"
+                        value="{{ selected_date }}"
+                        class="form-control">
+
+                </div>
+
+                <div class="col-md-5">
+
+                    <label class="form-label">
+
+                        Batch
+
+                    </label>
+
+                    <select
+                        name="batch"
+                        class="form-select">
+
+                        <option value="">
+
+                            Select Batch
+
+                        </option>
+
+                        {% for batch in batches %}
+
+                            <option
+                                value="{{ batch.id }}"
+                                {% if selected_batch == batch.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}>
+
+                                {{ batch.batch_code }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <button class="btn btn-primary w-100">
+
+                        <i class="bi bi-search"></i>
+
+                        Generate
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Report -->
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+
+            Student Attendance
+
+        </h5>
+
+    </div>
+
+    {% if holiday %}
+
+        <div class="alert alert-warning text-center shadow-sm">
+
+            <h4 class="mb-2">
+
+                <i class="bi bi-calendar-x"></i>
+
+                Holiday
+
+            </h4>
+
+            <p class="mb-0">
+
+                {{ holiday_message }}
+
+            </p>
+
+        </div>
+
+    {% else %}
+
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover table-striped align-middle mb-0">
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Student</th>
+
+                        <th>Time</th>
+
+                        <th>Status</th>
+
+                        <th>Confidence</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for row in report %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ forloop.counter }}
+
+                        </td>
+
+                        <td>
+
+                            <strong>
+
+                                {{ row.student.first_name }}
+                                {{ row.student.last_name }}
+
+                            </strong>
+
+                            <br>
+
+                            <small class="text-muted">
+
+                                {{ row.student.email }}
+
+                            </small>
+
+                        </td>
+
+                        <td>
+
+                            {% if row.time %}
+
+                                {{ row.time }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if row.status == "PRESENT" %}
+
+                                <span class="badge bg-success">
+
+                                    Present
+
+                                </span>
+
+                            {% elif row.status == "LATE" %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    Late
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+
+                                    Absent
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if row.confidence %}
+
+                                {{ row.confidence }}%
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="text-center py-5">
+
+                            <i class="bi bi-people display-3 text-muted"></i>
+
+                            <br><br>
+
+                            Select a batch to generate the attendance report.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

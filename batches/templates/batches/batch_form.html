@@ -1,0 +1,211 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+{% if object %}
+Edit Batch
+{% else %}
+Create Batch
+{% endif %}
+{% endblock %}
+
+{% block page_title %}
+{% if object %}
+Edit Batch
+{% else %}
+Create Batch
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+
+                <h5 class="mb-0">
+
+                    {% if object %}
+
+                        Update Batch Details
+
+                    {% else %}
+
+                        Create New Batch
+
+                    {% endif %}
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Batch Code
+
+                            </label>
+
+                            {{ form.batch_code }}
+
+                            {{ form.batch_code.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Course
+
+                            </label>
+
+                            {{ form.course }}
+
+                            {{ form.course.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Trainer
+
+                            </label>
+
+                            {{ form.trainer }}
+
+                            {{ form.trainer.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Status
+
+                            </label>
+
+                            {{ form.status }}
+
+                            {{ form.status.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                Start Date
+
+                            </label>
+
+                            {{ form.start_date }}
+
+                            {{ form.start_date.errors }}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+
+                                End Date
+
+                            </label>
+
+                            {{ form.end_date }}
+
+                            {{ form.end_date.errors }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+
+                        {{ form.is_registration_open }}
+
+                        <label class="form-check-label ms-2">
+
+                            Registration Open
+
+                        </label>
+
+                        {{ form.is_registration_open.errors }}
+
+                    </div>
+
+                    {% if form.non_field_errors %}
+
+                    <div class="alert alert-danger">
+
+                        {{ form.non_field_errors }}
+
+                    </div>
+
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between">
+
+                        <a href="{% url 'batches:batch_list' %}"
+                           class="btn btn-secondary">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Back
+
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-check-circle"></i>
+
+                            {% if object %}
+
+                                Update Batch
+
+                            {% else %}
+
+                                Create Batch
+
+                            {% endif %}
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

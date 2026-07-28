@@ -1,0 +1,294 @@
+{% extends "accounts/base.html" %}
+{% load static %}
+
+{% block title %}
+Trainer Details
+{% endblock %}
+
+{% block page_title %}
+Trainer Details
+{% endblock %}
+
+{% block page_actions %}
+
+<a href="{% url 'accounts:trainer_edit' trainer.id %}"
+   class="btn btn-warning">
+
+    <i class="bi bi-pencil-square"></i>
+    Edit
+
+</a>
+
+<a href="{% url 'accounts:trainer_list' %}"
+   class="btn btn-secondary">
+
+    <i class="bi bi-arrow-left"></i>
+    Back
+
+</a>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <!-- Profile Card -->
+
+    <div class="col-lg-4">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body text-center">
+
+                {% if trainer.avatar %}
+
+                    <img src="{{ trainer.avatar.url }}"
+                         class="profile-image mb-3">
+
+                {% else %}
+
+                    <img src="{% static 'images/default-user.png' %}"
+                         class="profile-image mb-3">
+
+                {% endif %}
+
+                <h4 class="fw-bold">
+
+                    {{ trainer.get_full_name }}
+
+                </h4>
+
+                <p class="text-muted">
+
+                    {{ trainer.role }}
+
+                </p>
+
+                {% if trainer.is_active %}
+
+                    <span class="badge bg-success">
+
+                        Active
+
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-danger">
+
+                        Inactive
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Information Card -->
+
+    <div class="col-lg-8">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+
+                <h5 class="mb-0">
+
+                    Trainer Information
+
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-bordered">
+
+                    <tbody>
+
+                        <tr>
+
+                            <th width="30%">
+
+                                First Name
+
+                            </th>
+
+                            <td>
+
+                                {{ trainer.first_name }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Last Name
+
+                            </th>
+
+                            <td>
+
+                                {{ trainer.last_name }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Username
+
+                            </th>
+
+                            <td>
+
+                                {{ trainer.username }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Email
+
+                            </th>
+
+                            <td>
+
+                                {{ trainer.email }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Phone
+
+                            </th>
+
+                            <td>
+
+                                {{ trainer.phone }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Role
+
+                            </th>
+
+                            <td>
+
+                                {{ trainer.get_role_display }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Date Joined
+
+                            </th>
+
+                            <td>
+
+                                {{ trainer.date_joined|date:"d M Y" }}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Last Login
+
+                            </th>
+
+                            <td>
+
+                                {% if trainer.last_login %}
+
+                                    {{ trainer.last_login|date:"d M Y H:i" }}
+
+                                {% else %}
+
+                                    Never Logged In
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+
+                                Account Status
+
+                            </th>
+
+                            <td>
+
+                                {% if trainer.is_active %}
+
+                                    <span class="badge bg-success">
+
+                                        Active
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+
+                                        Inactive
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

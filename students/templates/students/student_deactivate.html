@@ -1,0 +1,92 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Deactivate Student
+{% endblock %}
+
+{% block page_title %}
+Deactivate Student
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-warning">
+
+            <div class="card-header bg-warning">
+
+                <h5 class="mb-0">
+
+                    Deactivate Student
+
+                </h5>
+
+            </div>
+
+            <div class="card-body text-center">
+
+                {% if student.profile_picture %}
+
+                    <img src="{{ student.profile_picture.url }}"
+                         class="rounded-circle border mb-3"
+                         width="150"
+                         height="150">
+
+                {% endif %}
+
+                <h4>
+
+                    {{ student.first_name }}
+
+                    {{ student.last_name }}
+
+                </h4>
+
+                <p class="text-muted">
+
+                    {{ student.batch.batch_code }}
+
+                </p>
+
+                <div class="alert alert-warning mt-4">
+
+                    This student will become <strong>INACTIVE</strong>.
+
+                    <br><br>
+
+                    Inactive students cannot mark attendance until activated again.
+
+                </div>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <a href="{% url 'students:student_list' %}"
+                       class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-warning">
+
+                        Deactivate Student
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,327 @@
+/* ==========================================
+   AI LAB ATTENDANCE SYSTEM
+   Global Stylesheet
+========================================== */
+
+body{
+    background-color:#f4f6f9;
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    color:#343a40;
+}
+
+/* ==========================================
+   Navbar
+========================================== */
+
+.navbar{
+    height:65px;
+}
+
+.navbar-brand{
+    font-size:1.2rem;
+    font-weight:600;
+}
+
+/* ==========================================
+   Sidebar
+========================================== */
+
+.sidebar{
+    min-height:calc(100vh - 65px);
+    transition:all .3s ease;
+}
+
+.sidebar .list-group-item{
+
+    border:none;
+
+    border-radius:0;
+
+    padding:15px 20px;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    color:#495057;
+
+}
+
+.sidebar .list-group-item i{
+
+    margin-right:10px;
+
+}
+
+.sidebar .list-group-item:hover{
+
+    background:#0d6efd;
+
+    color:white;
+
+}
+
+.sidebar .list-group-item.active{
+
+    background:#0d6efd;
+
+    color:white;
+
+}
+
+/* ==========================================
+   Main Content
+========================================== */
+
+main{
+
+    min-height:90vh;
+
+    padding:25px;
+
+}
+
+/* ==========================================
+   Cards
+========================================== */
+
+.card{
+
+    border:none;
+
+    border-radius:12px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+.card-header{
+
+    background:white;
+
+    font-weight:600;
+
+    border-bottom:1px solid #dee2e6;
+
+}
+
+/* ==========================================
+   Tables
+========================================== */
+
+.table{
+
+    background:white;
+
+}
+
+.table thead{
+
+    background:#0d6efd;
+
+    color:white;
+
+}
+
+.table-hover tbody tr:hover{
+
+    background:#f5f9ff;
+
+}
+
+/* ==========================================
+   Buttons
+========================================== */
+
+.btn{
+
+    border-radius:8px;
+
+}
+
+.btn-primary{
+
+    padding:8px 18px;
+
+}
+
+/* ==========================================
+   Forms
+========================================== */
+
+.form-control,
+
+.form-select{
+
+    border-radius:8px;
+
+    min-height:45px;
+
+}
+
+.form-control:focus,
+
+.form-select:focus{
+
+    box-shadow:none;
+
+    border-color:#0d6efd;
+
+}
+
+/* ==========================================
+   Images
+========================================== */
+
+.profile-image{
+
+    width:120px;
+
+    height:120px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:4px solid white;
+
+    box-shadow:0 0 10px rgba(0,0,0,.15);
+
+}
+
+.thumbnail{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+/* ==========================================
+   Alerts
+========================================== */
+
+.alert{
+
+    border-radius:10px;
+
+}
+
+/* ==========================================
+   Footer
+========================================== */
+
+footer{
+
+    font-size:14px;
+
+}
+
+/* ==========================================
+   Utility
+========================================== */
+
+.shadow-sm{
+
+    box-shadow:0 .125rem .25rem rgba(0,0,0,.075)!important;
+
+}
+
+.rounded-card{
+
+    border-radius:12px;
+
+}
+
+.cursor-pointer{
+
+    cursor:pointer;
+
+}
+
+/* ==========================================
+   Login Page
+========================================== */
+
+.login-page{
+
+    min-height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:linear-gradient(135deg,#0d6efd,#4f9dff);
+
+}
+
+.login-card{
+
+    width:420px;
+
+    border-radius:15px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+
+}
+
+.login-logo{
+
+    font-size:50px;
+
+    color:#0d6efd;
+
+}
+
+/* ==========================================
+   Dashboard Cards
+========================================== */
+
+.dashboard-card{
+
+    transition:.3s;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media(max-width:768px){
+
+.sidebar{
+
+    min-height:auto;
+
+}
+
+main{
+
+    padding:15px;
+
+}
+
+.navbar-brand{
+
+    font-size:1rem;
+
+}
+
+.login-card{
+
+    width:95%;
+
+}
+}

@@ -1,0 +1,92 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}
+Activate Student
+{% endblock %}
+
+{% block page_title %}
+Activate Student
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-success">
+
+            <div class="card-header bg-success text-white">
+
+                <h5 class="mb-0">
+
+                    Activate Student
+
+                </h5>
+
+            </div>
+
+            <div class="card-body text-center">
+
+                {% if student.profile_picture %}
+
+                    <img src="{{ student.profile_picture.url }}"
+                         class="rounded-circle border mb-3"
+                         width="150"
+                         height="150">
+
+                {% endif %}
+
+                <h4>
+
+                    {{ student.first_name }}
+
+                    {{ student.last_name }}
+
+                </h4>
+
+                <p class="text-muted">
+
+                    {{ student.batch.batch_code }}
+
+                </p>
+
+                <div class="alert alert-success mt-4">
+
+                    This student will become <strong>ACTIVE</strong>.
+
+                    <br><br>
+
+                    Active students can register attendance.
+
+                </div>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <a href="{% url 'students:student_list' %}"
+                       class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-success">
+
+                        Activate Student
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

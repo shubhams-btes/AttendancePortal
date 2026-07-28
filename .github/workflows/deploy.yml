@@ -1,0 +1,56 @@
+name: Deploy AI Attendance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+
+        with:
+
+          python-version: 3.10.12
+
+      - name: Deploy
+
+        uses: appleboy/ssh-action@v0.1.7
+
+        with:
+
+          host: ${{ secrets.SERVER_IP }}
+
+          username: ${{ secrets.SERVER_USER }}
+
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          port: ${{ secrets.SERVER_SSH_PORT }}
+
+          script: |
+
+            cd /home/user/AIAttendanceSystem
+
+            git fetch --all
+
+            git reset --hard origin/main
+
+            source venv/bin/activate
+
+            pip install -r requirements.txt
+
+            python manage.py migrate --noinput
+
+            python manage.py collectstatic --noinput
+
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S systemctl restart attendance
+
+            sudo systemctl status attendance --no-pager
