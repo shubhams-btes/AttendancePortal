@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-lo%#i)+f#5vx_i(#-fq^lb9$eos#zv#u9x()k(3r+a@-e)bfx2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['182.76.176.205', 'localhost','127.0.0.1']
 
 
 # Application definition
@@ -48,9 +48,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # Auth first
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -90,7 +91,10 @@ DATABASES = {
     }
 }
 
-
+CSRF_TRUSTED_ORIGINS = [
+    'http://182.76.176.205:8002',
+    'https://182.76.176.205:8002',  # If you plan to use HTTPS
+]
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
