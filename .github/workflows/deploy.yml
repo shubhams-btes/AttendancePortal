@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy
 
-        uses: appleboy/ssh-action@v0.1.7
+        uses: appleboy/ssh-action@v1.2.2
 
         with:
 
