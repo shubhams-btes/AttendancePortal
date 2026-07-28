@@ -1,4 +1,4 @@
-name: Deploy BTES Attendance Portal
+name: Deploy Face Recognization Attendance Portal
 
 on:
   push:
