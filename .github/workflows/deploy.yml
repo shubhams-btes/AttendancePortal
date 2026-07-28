@@ -51,6 +51,6 @@ jobs:
 
             python manage.py collectstatic --noinput
 
-            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S systemctl restart attendanceportal
+            echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl restart attendanceportal
 
-            sudo systemctl status attendance --no-pager
+            echo "${{ secrets.SERVER_PASSWORD }}" | sudo -S systemctl status attendanceportal --no-pager
