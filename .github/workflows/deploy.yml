@@ -37,7 +37,7 @@ jobs:
 
           script: |
 
-            cd /home/user/AIAttendanceSystem
+            cd /home/user/AttendancePortal
 
             git fetch --all
 
