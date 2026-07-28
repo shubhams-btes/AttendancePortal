@@ -1,4 +1,4 @@
-name: Deploy AI Attendance
+name: Deploy BTES Attendance Portal
 
 on:
   push:
