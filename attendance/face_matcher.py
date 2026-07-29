@@ -89,7 +89,7 @@ def recognize_face(image_path, threshold=0.60):
 
         return {
             "success": False,
-            "message": "No registered student found."
+            "message": "Unauthorized access detected."
         }
 
     if best_similarity < threshold:

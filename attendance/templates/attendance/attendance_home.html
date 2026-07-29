@@ -1426,7 +1426,7 @@ WAITING
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
 
 <script>
-
+let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 function speak(text){
 
     window.speechSynthesis.cancel();
@@ -1441,31 +1441,31 @@ function speak(text){
     window.speechSynthesis.speak(speech);
 }
 
-function beep(duration=200, frequency=800){
+function beep(duration = 300, frequency = 1000){
 
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioContext.state === "suspended"){
+        audioContext.resume();
+    }
 
-    const oscillator = ctx.createOscillator();
-
-    const gain = ctx.createGain();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
 
     oscillator.type = "sine";
-
     oscillator.frequency.value = frequency;
 
     oscillator.connect(gain);
+    gain.connect(audioContext.destination);
 
-    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.6, audioContext.currentTime);
 
     oscillator.start();
 
     gain.gain.exponentialRampToValueAtTime(
-        0.00001,
-        ctx.currentTime + duration/1000
+        0.0001,
+        audioContext.currentTime + duration / 1000
     );
 
-    oscillator.stop(ctx.currentTime + duration/1000);
-
+    oscillator.stop(audioContext.currentTime + duration / 1000);
 }
 
 let faceDetected=false;
@@ -1502,6 +1502,7 @@ video:true
 
 });
 
+
 video.srcObject=stream;
 
 video.onloadedmetadata=function(){
@@ -1512,7 +1513,7 @@ video.onloadedmetadata=function(){
 
 statusText.innerHTML="Waiting For Face...";
 
-autoDetect();
+
 
 }
 
@@ -1526,23 +1527,13 @@ statusText.innerHTML="Camera Error";
 
 startCamera();
 
-function autoDetect(){
 
-setTimeout(function(){
-
-if(scanning) return;
-
-startCountdown();
-
-},2500);
-
-}
 
 function startCountdown(){
 
 if(faceStableCounter==0){
 
-clearInterval(timer);
+
 
 countdown.style.display="none";
 
@@ -1825,7 +1816,7 @@ countdown.style.display="none";
 
 scanning=false;
 
-autoDetect();
+
 
 }
 
