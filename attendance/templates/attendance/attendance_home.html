@@ -1427,6 +1427,47 @@ WAITING
 
 <script>
 
+function speak(text){
+
+    window.speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    speech.lang = "en-US";
+    speech.rate = 1;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    window.speechSynthesis.speak(speech);
+}
+
+function beep(duration=200, frequency=800){
+
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const oscillator = ctx.createOscillator();
+
+    const gain = ctx.createGain();
+
+    oscillator.type = "sine";
+
+    oscillator.frequency.value = frequency;
+
+    oscillator.connect(gain);
+
+    gain.connect(ctx.destination);
+
+    oscillator.start();
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.00001,
+        ctx.currentTime + duration/1000
+    );
+
+    oscillator.stop(ctx.currentTime + duration/1000);
+
+}
+
 let faceDetected=false;
 
 let faceStableCounter=0;
@@ -1692,20 +1733,59 @@ ${data.confidence}%
 `;
 
             matchStatus.innerHTML = "VERIFIED";
+            beep(150,1000);
+            speak(`Access granted. Welcome ${data.student}. Attendance has been marked.`);
 
         }
 
         else{
 
-            statusText.innerHTML = `
-                <span style="color:#ff4444;font-size:24px;">
-                    ✖ ${data.message}
-                </span>
-            `;
+    statusText.innerHTML = `
+        <span style="color:#ff4444;font-size:24px;">
+            ✖ ${data.message}
+        </span>
+    `;
 
-            matchStatus.innerHTML = "FAILED";
+    matchStatus.innerHTML = "FAILED";
 
-        }
+    // Speak appropriate message
+
+    const msg = data.message.toLowerCase();
+    beep(400,250);
+    if(msg.includes("already")){
+
+        speak("Attendance already marked for today.");
+
+    }
+    else if(msg.includes("holiday")){
+
+        speak("Today is a holiday. Attendance cannot be marked.");
+
+    }
+    else if(msg.includes("unauthorized") ||
+            msg.includes("not recognized") ||
+            msg.includes("unknown")){
+
+        speak("Unauthorized access detected.");
+
+    }
+    else if(msg.includes("no face")){
+
+        speak("No face detected.");
+
+    }
+    else if(msg.includes("multiple")){
+
+        speak("Multiple faces detected. Please stand alone.");
+
+    }
+    else{
+
+        speak(data.message);
+
+    }
+
+}
 
         setTimeout(resetScanner,3000);
 
@@ -1713,13 +1793,19 @@ ${data.confidence}%
 
     catch(error){
 
-        statusText.innerHTML = "Server Error";
+    statusText.innerHTML = `
+        <span style="color:#ff4444;font-size:24px;">
+            ✖ Server Error
+        </span>
+    `;
 
-        matchStatus.innerHTML = "ERROR";
+    matchStatus.innerHTML = "ERROR";
 
-        setTimeout(resetScanner,3000);
+    speak("Unable to connect to the attendance server.");
 
-    }
+    setTimeout(resetScanner,3000);
+
+}
 
 }
 
