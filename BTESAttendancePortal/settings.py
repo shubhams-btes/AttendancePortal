@@ -94,7 +94,7 @@ DATABASES = {
 CSRF_TRUSTED_ORIGINS = [
     'http://182.76.176.205:8002',
     'https://182.76.176.205:8002',
-    '79a8-182-76-176-205.ngrok-free.app'# If you plan to use HTTPS
+    'https://79a8-182-76-176-205.ngrok-free.app'# If you plan to use HTTPS
 ]
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
