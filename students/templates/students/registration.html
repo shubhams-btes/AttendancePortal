@@ -1,401 +1,366 @@
 {% load static %}
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
+    <title>AI Lab Student Registration | BTES</title>
 
-    <title>
-
-        Student Registration
-
-    </title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-          rel="stylesheet">
+    <link href="{% static 'students/css/ai-registration.css' %}" rel="stylesheet">
 
 </head>
 
-<body class="bg-light">
+<body>
 
-<div class="container py-5">
+<div class="exam-layout">
 
-    <div class="row justify-content-center">
+    <!-- ==========================================
+                    LEFT PANEL
+    =========================================== -->
+    <aside class="left-panel">
 
-        <div class="col-lg-8">
+        <section class="sidebar-content">
 
-            <div class="card shadow">
+            <div class="logo">
+                <a href="#">
+                    <img src="{% static 'students/images/logo-white.png' %}" alt="BTES">
+                </a>
+            </div>
 
-                <div class="card-header bg-primary text-white text-center">
+            <figure class="ai-illustration">
+                <img src="{% static 'students/images/registration.png' %}" alt="AI Face Attendance">
+            </figure>
 
-                    <h3>
+            <div class="guidelines-box">
 
-                        AI Lab Student Registration
+                <h3>Student Registration Process</h3>
 
-                    </h3>
+                <div class="process">
 
-                    <p class="mb-0">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span>Fill Personal Details</span>
+                    </div>
+                    <div class="step-connector">
+                        <span class="line"></span>
+                        <svg class="down-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
 
-                        Complete your registration to join your batch
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span>Capture / Upload Photo</span>
+                    </div>
+                    <div class="step-connector">
+                        <span class="line"></span>
+                        <svg class="down-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
 
-                    </p>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span>AI Face Encoding</span>
+                    </div>
+                    <div class="step-connector">
+                        <span class="line"></span>
+                        <svg class="down-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+
+                    <div class="step">
+                        <span class="step-number">4</span>
+                        <span>Registration Complete</span>
+                    </div>
 
                 </div>
 
-                <div class="card-body">
-
-                    {% if messages %}
-
-                        {% for message in messages %}
-
-                            <div class="alert alert-success">
-
-                                {{ message }}
-
-                            </div>
-
-                        {% endfor %}
-
-                    {% endif %}
-
-                    <form method="post"
-                          enctype="multipart/form-data">
-
-                        {% csrf_token %}
-
-                        <div class="row">
-
-                            <div class="col-md-6 mb-3">
-
-                                <label class="form-label">
-
-                                    Batch
-
-                                </label>
-
-                                {{ form.batch }}
-
-                                {{ form.batch.errors }}
-
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-
-                                <label class="form-label">
-
-                                    Degree
-
-                                </label>
-
-                                {{ form.degree }}
-
-                                {{ form.degree.errors }}
-
-                            </div>
-
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-md-6 mb-3">
-
-                                <label class="form-label">
-
-                                    First Name
-
-                                </label>
-
-                                {{ form.first_name }}
-
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-
-                                <label class="form-label">
-
-                                    Last Name
-
-                                </label>
-
-                                {{ form.last_name }}
-
-                            </div>
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
-
-                                Email
-
-                            </label>
-
-                            {{ form.email }}
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
-
-                                Phone Number
-
-                            </label>
-
-                            {{ form.phone }}
-
-                        </div>
-
-                        <div class="mb-4">
-
-                            <label class="form-label">
-
-                                Address
-
-                            </label>
-
-                            {{ form.address }}
-
-                        </div>
-
-                        <hr>
-
-                        <h5 class="mb-3">
-
-                            Profile Photo
-
-                        </h5>
-
-                        <p class="text-muted">
-
-                            A clear front-facing photo is required for AI-based attendance.
-
-                        </p>
-
-                        <div class="text-center mb-3">
-
-                            <img id="previewImage"
-                                 src="{% static 'students/images/default-image.avif' %}"
-                                 class="rounded-circle border"
-                                 width="180"
-                                 height="180">
-
-                        </div>
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
-
-                                Choose Image
-
-                            </label>
-
-                            {{ form.photo }}
-
-                        </div>
-
-                        <div class="d-grid gap-2">
-
-                            <button type="button"
-                                    class="btn btn-outline-primary"
-                                    id="cameraButton">
-
-                                <i class="bi bi-camera-fill"></i>
-
-                                Capture Live Photo (Recommended)
-
-                            </button>
-
-                            <button type="button"
-                                    class="btn btn-outline-secondary"
-                                    onclick="document.getElementById('id_photo').click();">
-
-                                <i class="bi bi-image"></i>
-
-                                Choose From Gallery
-
-                            </button>
-
-                        </div>
-
-                        <div id="cameraContainer"
-                             class="text-center mt-4"
-                             style="display:none;">
-
-                            <video id="video"
-                                   width="320"
-                                   height="240"
-                                   autoplay
-                                   class="border rounded">
-
-                            </video>
-
-                            <br><br>
-
-                            <button type="button"
-                                    class="btn btn-success"
-                                    id="captureButton">
-
-                                Capture
-
-                            </button>
-
-                            <canvas id="canvas"
-                                    style="display:none;">
-
-                            </canvas>
-
-                        </div>
-
-                        <hr>
-
-                        <div class="d-grid">
-
-                            <button class="btn btn-primary btn-lg">
-
-                                <i class="bi bi-check-circle"></i>
-
-                                Register
-
-                            </button>
-
-                        </div>
-
-                    </form>
-
-                </div>
+                <hr>
+
+                <h4>Before You Register</h4>
+
+                <ul class="checklist">
+                    <li>Use your official Registration ID.</li>
+                    <li>Upload a clear front-facing photo.</li>
+                    <li>Ensure good lighting.</li>
+                    <li>Remove sunglasses or masks.</li>
+                    <li>Verify all details before submitting.</li>
+                </ul>
 
             </div>
 
+            <div class="copyright">
+                Copyright © BTES. All rights reserved.
+            </div>
+
+        </section>
+
+    </aside>
+
+    <!-- ==========================================
+                    RIGHT PANEL
+    =========================================== -->
+    <main class="right-panel">
+
+        <div class="content-area">
+
+            <form method="post" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                <h2 class="ailab-title">AI Lab Student Registration</h2>
+                <p class="form-subtitle">Complete the registration form to join your assigned batch.</p>
+                <span class="title-accent"></span>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="msg-box">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Batch / Degree -->
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Batch</label>
+                        <div class="select-wrap">
+                            {{ form.batch }}
+                        </div>
+                        {% for error in form.batch.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Degree</label>
+                        <div class="select-wrap">
+                            {{ form.degree }}
+                        </div>
+                        {% for error in form.degree.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- First / Last Name -->
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <div class="input-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            {{ form.first_name }}
+                        </div>
+                        {% for error in form.first_name.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <div class="input-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            {{ form.last_name }}
+                        </div>
+                        {% for error in form.last_name.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- Registration ID -->
+                <div class="form-group">
+                    <label>Registration ID</label>
+                    <div class="input-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h2"/><path d="M13 9h4"/><path d="M7 14h10"/></svg>
+                        {{ form.registration_ID }}
+                    </div>
+                    {% for error in form.registration_ID.errors %}
+                        <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                        {{ form.email }}
+                    </div>
+                    {% for error in form.email.errors %}
+                        <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <div class="input-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        {{ form.phone }}
+                    </div>
+                    {% for error in form.phone.errors %}
+                        <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <!-- Address -->
+                <div class="form-group">
+                    <label>Address</label>
+                    <div class="input-icon textarea-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        {{ form.address }}
+                    </div>
+                    {% for error in form.address.errors %}
+                        <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- ==============================
+                            PROFILE PHOTO
+                =============================== -->
+                <h3 class="ailab-subtitle">Profile Photo</h3>
+                <p class="form-subtitle">A clear front-facing photo is required for AI-based attendance.</p>
+
+                <div class="photo-header">
+
+                    <div class="photo-avatar">
+                        <img id="previewImage"
+                             src="{% static 'students/images/default-image.avif' %}"
+                             alt="Preview">
+                    </div>
+
+                    <div class="photo-buttons">
+
+                        <button type="button" id="cameraButton" class="btn btn-photo-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Capture Live Photo
+                        </button>
+
+                        <button type="button" class="btn btn-photo-outline"
+                                onclick="document.getElementById('id_photo').click();">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                            Choose From Gallery
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Hidden Django file input -->
+                <div class="form-group photo-field">
+                    {{ form.photo }}
+                </div>
+
+                <!-- Live Camera Box -->
+                <div id="cameraContainer" class="camera-box">
+
+                    <div class="camera-view">
+                        <video id="video" autoplay playsinline></video>
+                        <span class="corner tl"></span>
+                        <span class="corner tr"></span>
+                        <span class="corner bl"></span>
+                        <span class="corner br"></span>
+                    </div>
+
+                    <div class="camera-info">
+                        <div class="cam-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            Live Camera
+                        </div>
+                        <p>Position your face inside the frame</p>
+                        <button type="button" id="captureButton" class="btn btn-photo-primary btn-sm">
+                            Capture Photo
+                        </button>
+                    </div>
+
+                    <canvas id="canvas" style="display:none;"></canvas>
+
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Info bar -->
+                <div class="info-bar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    Verify all information before submitting.
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-register">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="m8.5 16 1.5 1.5L13 14.5"/></svg>
+                    Register
+                </button>
+
+            </form>
+
         </div>
 
-    </div>
+    </main>
 
 </div>
 
 <script>
 
-const fileInput = document.getElementById("id_photo");
+    const fileInput      = document.getElementById("id_photo");
+    const preview        = document.getElementById("previewImage");
+    const video          = document.getElementById("video");
+    const canvas         = document.getElementById("canvas");
+    const cameraButton   = document.getElementById("cameraButton");
+    const captureButton  = document.getElementById("captureButton");
 
-const preview = document.getElementById("previewImage");
+    let stream = null;
 
-const cameraContainer = document.getElementById("cameraContainer");
+    /* Gallery Upload Preview */
+    fileInput.addEventListener("change", function () {
+        if (this.files.length > 0) {
+            preview.src = URL.createObjectURL(this.files[0]);
+        }
+    });
 
-const video = document.getElementById("video");
+    /* Open Camera */
+    cameraButton.addEventListener("click", async function () {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+        } catch (err) {
+            alert("Unable to access camera.");
+        }
+    });
 
-const canvas = document.getElementById("canvas");
+    /* Capture Photo */
+    captureButton.addEventListener("click", function () {
+        if (!video.videoWidth) {
+            alert("Please start the camera first using \"Capture Live Photo\".");
+            return;
+        }
 
-let stream = null;
+        canvas.width  = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
 
+        canvas.toBlob(function (blob) {
+            const file = new File([blob], "captured_photo.png", { type: "image/png" });
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+            preview.src = URL.createObjectURL(file);
+        }, "image/png");
 
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+    });
 
-/* ------------------------------
-   Gallery Upload Preview
---------------------------------*/
-
-fileInput.addEventListener("change", function () {
-
-    if (this.files.length > 0) {
-
-        preview.src = URL.createObjectURL(this.files[0]);
-
-    }
-
-});
-
-
-
-/* ------------------------------
-   Open Camera
---------------------------------*/
-
-document.getElementById("cameraButton").addEventListener("click", async function () {
-
-    try {
-
-        stream = await navigator.mediaDevices.getUserMedia({
-
-            video: true
-
-        });
-
-        video.srcObject = stream;
-
-        cameraContainer.style.display = "block";
-
-    }
-
-    catch (err) {
-
-        alert("Unable to access camera.");
-
-    }
-
-});
-
-
-
-/* ------------------------------
-   Capture Image
---------------------------------*/
-
-document.getElementById("captureButton").addEventListener("click", function () {
-
-    canvas.width = video.videoWidth;
-
-    canvas.height = video.videoHeight;
-
-    const ctx = canvas.getContext("2d");
-
-    ctx.drawImage(video, 0, 0);
-
-    canvas.toBlob(function(blob){
-
-        const file = new File(
-
-            [blob],
-
-            "captured_photo.png",
-
-            {
-
-                type: "image/png"
-
-            }
-
-        );
-
-        const dt = new DataTransfer();
-
-        dt.items.add(file);
-
-        fileInput.files = dt.files;
-
-        preview.src = URL.createObjectURL(file);
-
-    }, "image/png");
-
-
-
-    if(stream){
-
-        stream.getTracks().forEach(track => track.stop());
-
-    }
-
-    cameraContainer.style.display = "none";
-
-});
+    /* Stop camera on exit */
+    window.addEventListener("beforeunload", function () {
+        if (stream) stream.getTracks().forEach(track => track.stop());
+    });
 
 </script>
 

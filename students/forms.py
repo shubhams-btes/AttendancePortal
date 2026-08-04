@@ -15,6 +15,7 @@ class StudentRegistrationForm(forms.ModelForm):
             "batch",
             "first_name",
             "last_name",
+            "registration_ID",
             "email",
             "phone",
             "address",
@@ -43,7 +44,12 @@ class StudentRegistrationForm(forms.ModelForm):
                     "placeholder": "Last Name"
                 }
             ),
-
+            "registration_ID": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Registration ID"
+                }
+            ),
             "email": forms.EmailInput(
                 attrs={
                     "class": "form-control",
