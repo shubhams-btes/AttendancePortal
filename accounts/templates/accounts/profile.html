@@ -29,7 +29,7 @@ My Profile
 
                 {% else %}
 
-                    <img src="{% static 'images/default-user.png' %}"
+                    <img src="{% static 'accounts/images/default-user.png' %}"
                          class="profile-image mb-3"
                          id="profile-preview">
 
@@ -215,7 +215,7 @@ My Profile
 
 <script>
 
-const imageInput = document.getElementById("id_profile_image");
+const imageInput = document.getElementById("id_avatar");
 
 if(imageInput){
 

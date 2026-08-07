@@ -207,3 +207,23 @@ class StudentSearchForm(forms.Form):
             }
         )
     )
+    
+
+class StudentLeaveForm(forms.Form):
+    start_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}))
+    end_date = forms.DateField(widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}))
+    reason = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Reason for leave"}),
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        start = cleaned.get("start_date")
+        end = cleaned.get("end_date")
+        if start and end:
+            if end < start:
+                raise forms.ValidationError("End date cannot be before start date.")
+            if (end - start).days > 90:
+                raise forms.ValidationError("Leave range cannot exceed 90 days.")
+        return cleaned

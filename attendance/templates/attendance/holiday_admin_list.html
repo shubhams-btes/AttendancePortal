@@ -1,0 +1,43 @@
+{% extends "accounts/base.html" %}
+{% block title %}Holidays & OO{% endblock %}
+{% block page_title %}Holidays & Out of Office{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">All Holidays & OO Periods</h5>
+        <div class="btn-group btn-group-sm">
+            <a href="?" class="btn btn-outline-secondary">All</a>
+            <a href="?type=HOLIDAY" class="btn btn-outline-secondary">Holidays</a>
+            <a href="?type=OO" class="btn btn-outline-secondary">OO</a>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-bordered mb-0">
+            <thead class="table-dark">
+                <tr><th>Type</th><th>Scope</th><th>From</th><th>To</th><th>Reason</th><th>Created By</th></tr>
+            </thead>
+            <tbody>
+                {% for h in holidays %}
+                <tr>
+                    <td>
+                        {% if h.type == "OO" %}
+                            <span class="badge bg-warning text-dark">OO</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Holiday</span>
+                        {% endif %}
+                    </td>
+                    <td>{% if h.batch %}{{ h.batch.batch_code }}{% else %}Global{% endif %}</td>
+                    <td>{{ h.start_date }}</td>
+                    <td>{{ h.end_date|default:h.start_date }}</td>
+                    <td>{{ h.reason }}</td>
+                    <td>{{ h.created_by.get_full_name|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No records.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

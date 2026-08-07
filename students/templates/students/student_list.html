@@ -1,5 +1,5 @@
 {% extends "accounts/base.html" %}
-
+{% load static %}
 {% block title %}
 Students
 {% endblock %}
@@ -127,13 +127,10 @@ Students
 
                     <td>
 
-                        {% if student.profile_picture %}
-
-                        <img src="{{ student.profile_picture.url }}"
-                             width="55"
-                             height="55"
-                             class="rounded-circle border">
-
+                        {% if student.photo %}
+                            <img src="{{ student.photo.url }}" class="rounded-circle border" width="55" height="55">
+                        {% else %}
+                            <img src="{% static 'students/images/default-user.png' %}" class="rounded-circle border" width="55" height="55">
                         {% endif %}
 
                     </td>
@@ -214,41 +211,29 @@ Students
                         </a>
 
                         {% if request.user.role == "ADMIN" %}
+                            <a href="{% url 'students:student_edit' student.id %}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
 
-                        <a href="{% url 'students:student_edit' student.id %}"
-                           class="btn btn-sm btn-warning">
+                            {% if student.status == "ACTIVE" %}
+                                {# Active → offer deactivate (POST form) #}
+                                <form method="post" action="{% url 'students:student_deactivate' student.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-secondary"><i class="bi bi-person-dash"></i></button>
+                                </form>
+                            {% else %}
+                                {# Pending/Inactive → offer activate #}
+                                <a href="{% url 'students:student_activate' student.id %}" class="btn btn-sm btn-success">
+                                    <i class="bi bi-person-check"></i>
+                                </a>
+                            {% endif %}
 
-                            <i class="bi bi-pencil"></i>
-
-                        </a>
-
-                        {% if student.status == "ACTIVE" %}
-
-                        <a href="{% url 'students:student_deactivate' student.id %}"
-                           class="btn btn-sm btn-secondary">
-
-                            <i class="bi bi-person-dash"></i>
-
-                        </a>
-
-                        {% else %}
-
-                        <a href="{% url 'students:student_activate' student.id %}"
-                           class="btn btn-sm btn-success">
-
-                            <i class="bi bi-person-check"></i>
-
-                        </a>
-
-                        {% endif %}
-
-                        <a href="{% url 'students:student_delete' student.id %}"
-                           class="btn btn-sm btn-danger">
-
-                            <i class="bi bi-trash"></i>
-
-                        </a>
-
+                            {# Delete only if NO attendance history; otherwise it's not shown at all #}
+                            {% if not student.has_attendance %}
+                                <a href="{% url 'students:student_delete' student.id %}" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            {% endif %}
                         {% endif %}
 
                     </td>

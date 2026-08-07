@@ -68,3 +68,22 @@ class Batch(models.Model):
 
     def __str__(self):
         return self.batch_code
+    
+    @property
+    def effective_status(self):
+        """
+        Status accounting for dates, so behavior is correct even if the
+        admin hasn't pressed 'Refresh Status' yet. COMPLETED is always
+        manual and wins over any date logic.
+        """
+        from django.utils import timezone
+
+        if self.status == self.Status.COMPLETED:
+            return self.Status.COMPLETED
+
+        today = timezone.now().date()
+
+        if self.status == self.Status.UPCOMING and self.start_date <= today:
+            return self.Status.ACTIVE
+
+        return self.status

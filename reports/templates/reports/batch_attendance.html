@@ -52,9 +52,9 @@ Batch Attendance Report
 
             <div class="card-body text-center">
 
-                <h6>Late</h6>
+                <h6>Leave</h6>
 
-                <h3>{{ late }}</h3>
+                <h3>{{ leave }}</h3>
 
             </div>
 
@@ -286,30 +286,18 @@ Batch Attendance Report
 
                         <td>
 
-                            {% if row.status == "PRESENT" %}
-
-                                <span class="badge bg-success">
-
-                                    Present
-
-                                </span>
-
-                            {% elif row.status == "LATE" %}
-
-                                <span class="badge bg-warning text-dark">
-
-                                    Late
-
-                                </span>
-
+                            {% if row.status == "P" %}
+                                <span class="badge bg-success">Present</span>
+                            {% elif row.status == "L" %}
+                                <span class="badge bg-warning text-dark">Leave</span>
+                            {% elif row.status == "A" %}
+                                <span class="badge bg-danger">Absent</span>
+                            {% elif row.status == "OO" %}
+                                <span class="badge bg-info text-dark">OO</span>
+                            {% elif row.status == "H" %}
+                                <span class="badge bg-secondary">Holiday</span>
                             {% else %}
-
-                                <span class="badge bg-danger">
-
-                                    Absent
-
-                                </span>
-
+                                <span class="text-muted">—</span>
                             {% endif %}
 
                         </td>

@@ -1,0 +1,92 @@
+{% extends "accounts/base.html" %}
+{% block title %}Manage Holidays{% endblock %}
+{% block page_title %}Holidays{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="row g-4 mb-4">
+
+    <!-- Single add -->
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header"><h5 class="mb-0">Add Single Holiday</h5></div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_single">
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        {{ holiday_form.date }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        {{ holiday_form.reason }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Holiday</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV upload -->
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header"><h5 class="mb-0">Upload Holidays (CSV)</h5></div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="upload_csv">
+                    <div class="mb-3">
+                        {{ csv_form.file }}
+                    </div>
+                    <button type="submit" class="btn btn-success">Upload</button>
+                </form>
+                <small class="text-muted d-block mt-3">
+                    CSV columns: <code>date,reason</code> — date as YYYY-MM-DD.<br>
+                    Duplicates are skipped. For a 2-day holiday, add two rows.
+                </small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header"><h5 class="mb-0">Holidays</h5></div>
+    <div class="card-body p-0">
+        <table class="table table-bordered mb-0">
+            <thead class="table-dark">
+                <tr><th>Date</th><th>Reason</th><th>Added By</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+                {% for h in holidays %}
+                <tr>
+                    <td>{{ h.start_date }}</td>
+                    <td>{{ h.reason }}</td>
+                    <td>{{ h.created_by.get_full_name|default:"—" }}</td>
+                    <td>
+                        <form method="post" action="{% url 'attendance:holiday_delete' h.id %}" style="margin:0;"
+                              onsubmit="return confirm('Delete this holiday?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-center text-muted py-4">No holidays added.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

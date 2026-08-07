@@ -92,7 +92,6 @@ class TrainerUpdateForm(UserChangeForm):
             "email",
             "phone",
             "avatar",
-            "role",
             "is_active",
         )
 

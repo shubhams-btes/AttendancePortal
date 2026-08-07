@@ -43,7 +43,7 @@ class Student(models.Model):
     )
     
     photo = models.ImageField(
-        upload_to="students/profile_pictures/"
+        upload_to="students/profile_pictures/",null=True,blank=True
     )
 
     status = models.CharField(
@@ -82,6 +82,10 @@ class Student(models.Model):
     # def registration_date(self):
     #     return self.created_at
     
+    @property
+    def has_attendance(self):
+        return self.attendance_records.exists()
+    
 class FaceProfile(models.Model):
 
     student = models.OneToOneField(
@@ -90,9 +94,7 @@ class FaceProfile(models.Model):
         related_name="face_profile"
     )
 
-    face_image = models.ImageField(
-        upload_to="students/faces/"
-    )
+    
 
     face_encoding = models.JSONField()
 

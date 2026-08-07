@@ -1,5 +1,5 @@
 {% extends "accounts/base.html" %}
-
+{% load static %}
 {% block title %}
 Deactivate Student
 {% endblock %}
@@ -28,13 +28,10 @@ Deactivate Student
 
             <div class="card-body text-center">
 
-                {% if student.profile_picture %}
-
-                    <img src="{{ student.profile_picture.url }}"
-                         class="rounded-circle border mb-3"
-                         width="150"
-                         height="150">
-
+                {% if student.photo %}
+                    <img src="{{ student.photo.url }}" class="rounded-circle border" width="55" height="55">
+                {% else %}
+                    <img src="{% static 'students/images/default-user.png' %}" class="rounded-circle border" width="55" height="55">
                 {% endif %}
 
                 <h4>

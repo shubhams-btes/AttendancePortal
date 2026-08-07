@@ -12,28 +12,28 @@ Batch Management
 
 <div class="card shadow-sm">
 
-    <div class="card-header d-flex justify-content-between align-items-center">
+   <div class="card-header d-flex justify-content-between align-items-center">
 
-        <h5 class="mb-0">
+    <h5 class="mb-0">Batch List</h5>
 
-            Batch List
+    {% if request.user.role == "ADMIN" %}
+    <div class="d-flex gap-2">
 
-        </h5>
+        <form method="post" action="{% url 'batches:refresh_batch_status' %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-clockwise"></i> Refresh Status
+            </button>
+        </form>
 
-        {% if request.user.role == "ADMIN" %}
-
-        <a href="{% url 'batches:batch_add' %}"
-           class="btn btn-primary">
-
-            <i class="bi bi-plus-circle"></i>
-
-            Create Batch
-
+        <a href="{% url 'batches:batch_add' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Batch
         </a>
 
-        {% endif %}
-
     </div>
+    {% endif %}
+
+</div>
 
     <div class="card-body">
 
@@ -244,6 +244,8 @@ Batch Management
             </a>
 
             {% endif %}
+
+            
 
         </div>
 

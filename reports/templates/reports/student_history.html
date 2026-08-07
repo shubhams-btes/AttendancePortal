@@ -1,5 +1,5 @@
 {% extends "accounts/base.html" %}
-
+{% load static %}
 {% block title %}
 Student History
 {% endblock %}
@@ -102,9 +102,9 @@ Student Attendance History
 
             <div class="card-body text-center">
 
-                <h6>Late</h6>
+                <h6>Leave</h6>
 
-                <h2>{{ late }}</h2>
+                <h2>{{ leave }}</h2>
 
             </div>
 
@@ -164,9 +164,11 @@ Student Attendance History
 
             <div class="col-md-3 text-center">
 
-                <img src="{{ selected_student.photo.url }}"
-                     class="img-fluid rounded-circle border"
-                     width="150">
+                {% if selected_student.photo %}
+                    <img src="{{ selected_student.photo.url }}" class="img-fluid rounded-circle border" width="150">
+                {% else %}
+                    <img src="{% static 'students/images/default-user.png' %}" class="img-fluid rounded-circle border" width="150">
+                {% endif %}
 
             </div>
 

@@ -9,6 +9,7 @@ from .views import (
     StudentDeleteView,
     StudentActivateView,
     StudentDeactivateView,
+    MarkStudentLeaveView
 )
 
 app_name = "students"
@@ -70,5 +71,6 @@ urlpatterns = [
         StudentDeactivateView.as_view(),
         name="student_deactivate",
     ),
+    path("<int:pk>/mark-leave/", MarkStudentLeaveView.as_view(), name="mark_leave"),
 
 ]

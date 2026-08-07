@@ -1,14 +1,16 @@
-from datetime import date
+from datetime import date,datetime
 import calendar
-from datetime import datetime
+
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 
 from attendance.models import Attendance
 from students.models import Student
 from batches.models import Batch
 from attendance.utils import is_holiday
+from attendance.utils import holiday_type
 
 
 WEEKEND_DAYS = [5, 6]
@@ -25,17 +27,17 @@ class DailyAttendanceView(LoginRequiredMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
 
-        selected_date = self.request.GET.get(
-            "date",
-            date.today().isoformat()
-        )
+        date_str = self.request.GET.get("date")
+        if date_str:
+            try:
+                selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                selected_date = date.today()
+        else:
+            selected_date = date.today()
         
-        selected_date_obj = datetime.strptime(
-            selected_date,
-            "%Y-%m-%d"
-        ).date()
 
-        if is_holiday(selected_date_obj):
+        if is_holiday(selected_date):
 
             context["holiday"] = True
             context["holiday_message"] = (
@@ -97,61 +99,54 @@ class DailyAttendanceView(LoginRequiredMixin, TemplateView):
 
         present = 0
 
-        late = 0
+        leave = 0
 
         absent = 0
 
         for student in students:
+            
+            ht = holiday_type(selected_date, student.batch)
 
-            attendance = attendance_map.get(student.id)
+            if ht == "OO":
+                report.append({"student": student, "status": "OO", "time": None, "confidence": None})
+                continue
+            if ht in ("WEEKEND", "HOLIDAY"):
+                report.append({"student": student, "status": "H", "time": None, "confidence": None})
+                continue
 
-            if attendance:
+            record = attendance_map.get(student.id)
 
-                status = attendance.status
+            if record and record.status == Attendance.Status.PRESENT:
+                report.append({
+                    "student": student, "status": "P",
+                    "time": record.attendance_time,
+                    "confidence": record.confidence_score,
+                })
+                present += 1
 
-                time = attendance.attendance_time
-
-                confidence = attendance.confidence_score
-
-                if status == Attendance.Status.PRESENT:
-
-                    present += 1
-
-                elif status == Attendance.Status.LATE:
-
-                    late += 1
+            elif record and record.status == Attendance.Status.LEAVE:
+                report.append({
+                    "student": student, "status": "L",
+                    "time": None, "confidence": None,
+                })
+                leave += 1
 
             else:
-
-                status = Attendance.Status.ABSENT
-
-                time = None
-
-                confidence = None
-
+                report.append({
+                    "student": student, "status": "A",
+                    "time": None, "confidence": None,
+                })
                 absent += 1
 
-            report.append({
-
-                "student": student,
-
-                "status": status,
-
-                "time": time,
-
-                "confidence": confidence
-
-            })
-
         total = len(report)
+        counted = present + absent          # leave and OO/holiday excluded
+        percentage = round((present / counted) * 100, 2) if counted else 0
 
-        percentage = 0
-
-        if total:
+        if counted:
 
             percentage = round(
 
-                ((present + late) / total) * 100,
+                ((present) / counted) * 100,
 
                 2
 
@@ -169,7 +164,7 @@ class DailyAttendanceView(LoginRequiredMixin, TemplateView):
 
         context["present"] = present
 
-        context["late"] = late
+        context["leave"] = leave
 
         context["absent"] = absent
 
@@ -186,7 +181,7 @@ class MonthlyAttendanceView(LoginRequiredMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
 
-        today = datetime.today()
+        today = date.today() 
 
         year = int(
             self.request.GET.get(
@@ -263,7 +258,7 @@ class MonthlyAttendanceView(LoginRequiredMixin, TemplateView):
 
                 "present": 0,
 
-                "late": 0,
+                "leave": 0,
 
                 "absent": 0,
 
@@ -277,18 +272,30 @@ class MonthlyAttendanceView(LoginRequiredMixin, TemplateView):
 
                 current_date = date(year, month, day)
 
-                # Future dates
+                 # Future dates
                 if current_date > today:
-
-                    row["days"].append("-")
-
+                    ht = holiday_type(current_date, student.batch)
+                    if ht == "OO":
+                        row["days"].append("OO")
+                    elif ht in ("WEEKEND", "HOLIDAY"):
+                        row["days"].append("H")
+                    # Future: blank UNLESS leave was pre-marked for this day
+                    elif attendance_map.get((student.id, day)) == Attendance.Status.LEAVE:
+                        row["days"].append("L")
+                        row["leave"] += 1
+                    else:
+                        row["days"].append("-")
                     continue
 
                 # Sunday
-                if is_holiday(current_date):
+                ht = holiday_type(current_date, student.batch)
 
+                if ht == "OO":
+                    row["days"].append("OO")
+                    continue
+
+                if ht in ("WEEKEND", "HOLIDAY"):
                     row["days"].append("H")
-
                     continue
 
                 # Before student registration
@@ -300,43 +307,44 @@ class MonthlyAttendanceView(LoginRequiredMixin, TemplateView):
 
                         continue
 
-                attendance = attendance_map.get(
-                    (student.id, day)
-                )
+                attendance = attendance_map.get((student.id, day))
 
-                if attendance:
+                if attendance == Attendance.Status.PRESENT:
+                    row["days"].append("P")
+                    row["present"] += 1
 
-                    status = attendance
-
-                    row["days"].append(status)
-
-                    if status == Attendance.Status.PRESENT:
-
-                        row["present"] += 1
-
-                    elif status == Attendance.Status.LATE:
-
-                        row["late"] += 1
+                elif attendance == Attendance.Status.LEAVE:
+                    row["days"].append("L")
+                    row["leave"] += 1
 
                 else:
-
                     row["days"].append("A")
-
                     row["absent"] += 1
 
-            working_days = row["present"] + row["late"] + row["absent"]
+            working_days = row["present"] + row["absent"]
 
             if working_days:
 
                 row["percentage"] = round(
 
-                    ((row["present"] + row["late"]) / working_days) * 100,
+                    ((row["present"]) / working_days) * 100,
 
                     2
 
                 )
 
             report.append(row)
+            
+        total_absent = sum(row["absent"] for row in report)
+        total_working = sum(row["present"] + row["absent"] for row in report)
+
+        absenteeism_rate = 0
+        if total_working:
+            absenteeism_rate = round((total_absent / total_working) * 100, 2)
+
+        context["total_absent"] = total_absent
+        context["total_working"] = total_working
+        context["absenteeism_rate"] = absenteeism_rate
 
         context["report"] = report
 
@@ -381,17 +389,16 @@ class BatchAttendanceView(LoginRequiredMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
 
-        selected_date = self.request.GET.get(
-            "date",
-            date.today().isoformat()
-        )
-        
-        selected_date_obj = datetime.strptime(
-            selected_date,
-            "%Y-%m-%d"
-        ).date()
+        date_str = self.request.GET.get("date")
+        if date_str:
+            try:
+                selected_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            except ValueError:
+                selected_date = date.today()
+        else:
+            selected_date = date.today()
 
-        if is_holiday(selected_date_obj):
+        if is_holiday(selected_date):
 
             context["holiday"] = True
             context["holiday_message"] = (
@@ -420,15 +427,20 @@ class BatchAttendanceView(LoginRequiredMixin, TemplateView):
                 trainer=self.request.user
             )
 
-        selected_batch = self.request.GET.get("batch")
+        selected_batch_id = self.request.GET.get("batch")
+        selected_batch = None
+        if selected_batch_id:
+            selected_batch = Batch.objects.filter(pk=selected_batch_id).first()
 
+        ht = holiday_type(selected_date, selected_batch)
+        
         report = []
 
         total = 0
 
         present = 0
 
-        late = 0
+        leave = 0
 
         absent = 0
 
@@ -453,52 +465,46 @@ class BatchAttendanceView(LoginRequiredMixin, TemplateView):
             }
 
             for student in students:
+                
+                if ht == "OO":
+                    report.append({"student": student, "status": "OO", "time": None, "confidence": None})
+                    continue
+                if ht in ("WEEKEND", "HOLIDAY"):
+                    report.append({"student": student, "status": "H", "time": None, "confidence": None})
+                    continue
+                record = attendance_map.get(student.id)
 
-                attendance = attendance_map.get(student.id)
+                if record and record.status == Attendance.Status.PRESENT:
+                    report.append({
+                        "student": student, "status": "P",
+                        "time": record.attendance_time,
+                        "confidence": record.confidence_score,
+                    })
+                    present += 1
 
-                if attendance:
-
-                    status = attendance.status
-                    time = attendance.attendance_time
-                    confidence = attendance.confidence_score
-
-                    if status == Attendance.Status.PRESENT:
-
-                        present += 1
-
-                    elif status == Attendance.Status.LATE:
-
-                        late += 1
-
+                elif record and record.status == Attendance.Status.LEAVE:
+                    report.append({
+                        "student": student, "status": "L",
+                        "time": None, "confidence": None,
+                    })
+                    leave += 1
                 else:
-
-                    status = "ABSENT"
-                    time = None
-                    confidence = None
-
+                    report.append({
+                        "student": student, "status": "A",
+                        "time": None, "confidence": None,
+                    })
                     absent += 1
 
-                report.append({
 
-                    "student": student,
+        total = len(report)
+        counted = present + absent
+        percentage = round((present / counted) * 100, 2) if counted else 0
 
-                    "status": status,
-
-                    "time": time,
-
-                    "confidence": confidence
-
-                })
-
-            total = len(report)
-
-        percentage = 0
-
-        if total:
+        if counted:
 
             percentage = round(
 
-                ((present + late) / total) * 100,
+                ((present) / counted) * 100,
 
                 2
 
@@ -516,7 +522,7 @@ class BatchAttendanceView(LoginRequiredMixin, TemplateView):
 
         context["present"] = present
 
-        context["late"] = late
+        context["leave"] = leave
 
         context["absent"] = absent
 
@@ -553,7 +559,7 @@ class StudentHistoryView(LoginRequiredMixin, TemplateView):
 
         present = 0
 
-        late = 0
+        leave = 0
 
         absent = 0
 
@@ -561,7 +567,7 @@ class StudentHistoryView(LoginRequiredMixin, TemplateView):
 
         if student_id:
 
-            selected_student = students.get(pk=student_id)
+            selected_student = get_object_or_404(students, pk=student_id)
 
             history = Attendance.objects.filter(
 
@@ -575,9 +581,9 @@ class StudentHistoryView(LoginRequiredMixin, TemplateView):
 
             ).count()
 
-            late = history.filter(
+            leave = history.filter(
 
-                status=Attendance.Status.LATE
+                status=Attendance.Status.LEAVE
 
             ).count()
 
@@ -587,13 +593,13 @@ class StudentHistoryView(LoginRequiredMixin, TemplateView):
 
             ).count()
 
-            total = present + late + absent
+            total = present  + absent
 
             if total:
 
                 percentage = round(
 
-                    ((present + late) / total) * 100,
+                    ((present) / total) * 100,
 
                     2
 
@@ -607,7 +613,7 @@ class StudentHistoryView(LoginRequiredMixin, TemplateView):
 
         context["present"] = present
 
-        context["late"] = late
+        context["leave"] = leave
 
         context["absent"] = absent
 

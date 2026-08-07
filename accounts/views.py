@@ -9,7 +9,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
     DetailView,
-    TemplateView,
+    View
 )
 
 from .forms import LoginForm, TrainerCreationForm, TrainerUpdateForm,ProfileUpdateForm
@@ -19,7 +19,7 @@ from django.views.generic import UpdateView
 from django.db.models import Q
 
 class AdminRequiredMixin(UserPassesTestMixin):
-
+    raise_exception = True
     def test_func(self):
         return (
             self.request.user.is_authenticated
@@ -38,9 +38,8 @@ class CustomLoginView(LoginView):
 
         return reverse_lazy("dashboard:dashboard")
     
-class CustomLogoutView(LoginRequiredMixin, TemplateView):
-
-    def get(self, request, *args, **kwargs):
+class CustomLogoutView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
         logout(request)
         return redirect("accounts:login")
     
@@ -93,7 +92,7 @@ class TrainerListView(LoginRequiredMixin, AdminRequiredMixin, ListView):
 
         status = self.request.GET.get("status")
 
-        if status:
+        if status in ("0", "1"):
             queryset = queryset.filter(is_active=bool(int(status)))
 
         return queryset.order_by("first_name")

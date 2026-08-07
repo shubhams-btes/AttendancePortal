@@ -17,9 +17,13 @@ def create_face_profile(student):
 
     FaceProfile.objects.create(
         student=student,
-        face_image=student.photo,
         face_encoding=result["embedding"],
         is_verified=True
     )
+
+    # Photo has served its purpose (review + encoding). Delete file AND clear field.
+    student.photo.delete(save=False)   # removes the file from disk
+    student.photo = None               # clears the DB path
+    student.save(update_fields=["photo"])
 
     return True, "Face profile created successfully."

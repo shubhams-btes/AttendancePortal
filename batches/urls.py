@@ -10,6 +10,7 @@ from .views import (
     BatchCreateView,
     BatchUpdateView,
     BatchDeleteView,
+    refresh_batch_status
 )
 
 app_name = "batches"
@@ -77,4 +78,5 @@ urlpatterns = [
         BatchDeleteView.as_view(),
         name="batch_delete",
     ),
+     path("refresh-status/", refresh_batch_status, name="refresh_batch_status"),
 ]

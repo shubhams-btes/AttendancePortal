@@ -17,7 +17,7 @@ app.prepare(
 )
 
 
-def recognize_face(image_path, threshold=0.60):
+def recognize_face(image_path, threshold=0.65):
     """
     Compare the captured image with all registered students.
 
