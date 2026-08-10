@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-lo%#i)+f#5vx_i(#-fq^lb9$eos#zv#u9x()k(3r+a@-e)bfx2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['182.76.176.205', 'localhost','127.0.0.1','79a8-182-76-176-205.ngrok-free.app']
+ALLOWED_HOSTS = ['182.76.176.205', 'localhost','127.0.0.1','attendance.btes.co.in']
 
 
 # Application definition
@@ -94,7 +94,7 @@ DATABASES = {
 CSRF_TRUSTED_ORIGINS = [
     'http://182.76.176.205:8002',
     'https://182.76.176.205:8002',
-    'https://79a8-182-76-176-205.ngrok-free.app'# If you plan to use HTTPS
+    'http://attendance.btes.co.in'
 ]
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
