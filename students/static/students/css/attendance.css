@@ -250,3 +250,5 @@ a{text-decoration:none;color:inherit;}
     #countdown{font-size:110px;}
     .corner{width:40px;height:40px;}
 }
+.camera-stage.flash-ok  { box-shadow: 0 0 0 4px #16a34a, 0 20px 45px rgba(8,27,58,.22); }
+.camera-stage.flash-bad { box-shadow: 0 0 0 4px #dc2626, 0 20px 45px rgba(8,27,58,.22); }

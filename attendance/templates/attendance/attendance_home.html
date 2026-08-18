@@ -176,6 +176,18 @@ function speak(text){
     window.speechSynthesis.speak(s);
 }
 
+// function beep(duration = 300, frequency = 1000){
+//     if(audioContext.state === "suspended"){ audioContext.resume(); }
+//     const osc = audioContext.createOscillator();
+//     const gain = audioContext.createGain();
+//     osc.type = "sine"; osc.frequency.value = frequency;
+//     osc.connect(gain); gain.connect(audioContext.destination);
+//     gain.gain.setValueAtTime(0.6, audioContext.currentTime);
+//     osc.start();
+//     gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration / 1000);
+//     osc.stop(audioContext.currentTime + duration / 1000);
+// }
+
 function beep(duration = 300, frequency = 1000){
     if(audioContext.state === "suspended"){ audioContext.resume(); }
     const osc = audioContext.createOscillator();
@@ -186,6 +198,34 @@ function beep(duration = 300, frequency = 1000){
     osc.start();
     gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration / 1000);
     osc.stop(audioContext.currentTime + duration / 1000);
+}
+
+// SUCCESS — two rising bright notes ("ding-ding" up)
+function beepSuccess(){
+    if(audioContext.state === "suspended"){ audioContext.resume(); }
+    playTone(880, 0,    120, "sine");   // A5
+    playTone(1320, 130, 160, "sine");   // E6 — higher, rising = "good"
+}
+
+// ERROR — two low harsh buzzes ("buzz-buzz" down)
+function beepError(){
+    if(audioContext.state === "suspended"){ audioContext.resume(); }
+    playTone(220, 0,   200, "square");  // low, square = harsh
+    playTone(180, 230, 260, "square");  // even lower, repeated = "bad"
+}
+
+// helper: play one tone at an offset, with its own duration/waveform
+function playTone(frequency, startOffsetMs, duration, type = "sine"){
+    const t0 = audioContext.currentTime + startOffsetMs / 1000;
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    osc.connect(gain); gain.connect(audioContext.destination);
+    gain.gain.setValueAtTime(0.5, t0);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration / 1000);
+    osc.start(t0);
+    osc.stop(t0 + duration / 1000);
 }
 
 let faceStableCounter = 0;
@@ -340,7 +380,10 @@ async function sendAttendance(){
             setScan("Verified", "Welcome " + data.student);
             setRecognition("Verified \u2022 " + data.confidence + "%");
             setAttendance("Marked \u2713 " + data.student, "ok");
-            beep(150, 1000);
+            beepSuccess();
+            // add to sendAttendance, in each branch:
+            cameraStage.classList.add(data.success ? "flash-ok" : "flash-bad");
+            setTimeout(() => cameraStage.classList.remove("flash-ok","flash-bad"), 800);
             speak(`Access granted. Welcome ${data.student}. Attendance has been marked.`);
         }
         else{
@@ -349,8 +392,10 @@ async function sendAttendance(){
             setAttendance(data.message, "bad");
 
             const msg = data.message.toLowerCase();
-            beep(400, 250);
-
+            beepError();
+            // add to sendAttendance, in each branch:
+            cameraStage.classList.add(data.success ? "flash-ok" : "flash-bad");
+            setTimeout(() => cameraStage.classList.remove("flash-ok","flash-bad"), 800);
             if(msg.includes("already")){ speak("Attendance already marked for today."); }
             else if(msg.includes("holiday")){ speak("Today is a holiday. Attendance cannot be marked."); }
             else if(msg.includes("unauthorized") || msg.includes("not recognized") || msg.includes("unknown")){ speak("Unauthorized access detected."); }
