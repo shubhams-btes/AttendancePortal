@@ -167,6 +167,7 @@
 
 let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
+
 function speak(text){
     window.speechSynthesis.cancel();
     const s = new SpeechSynthesisUtterance(text);
@@ -384,17 +385,20 @@ function resetScanner(){
 }
 
 function initializeFaceDetection(){
-    detector = new FaceDetection({
-        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`
-    });
-    detector.setOptions({ model: "short", minDetectionConfidence: .75 });
-    detector.onResults(onFaceResults);
-
-    const camera = new Camera(video, {
-        onFrame: async () => { await detector.send({ image: video }); },
-        width: 640, height: 480
-    });
-    camera.start();
+    try {
+        detector = new FaceDetection({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}` });
+        detector.setOptions({ model: "short", minDetectionConfidence: .75 });
+        detector.onResults(onFaceResults);
+        const camera = new Camera(video, {
+            onFrame: async () => { await detector.send({ image: video }); },
+            width: 640, height: 480
+        });
+        camera.start();
+    } catch(e) {
+        setScan("Detection Unavailable", "Face detection failed to load. Check your connection.");
+        setDetection("Detection error");
+        console.error("MediaPipe init failed:", e);
+    }
 }
 
 function onFaceResults(results){
