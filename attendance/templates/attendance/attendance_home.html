@@ -298,7 +298,7 @@ function startCountdown(){
 function captureFrame(){
     const vw = video.videoWidth;
     const vh = video.videoHeight;
-
+    console.log("VIDEO native:", vw, "x", vh, "ratio:", (vw/vh).toFixed(3));
     // The stage's display aspect ratio (16:10 from your CSS)
     const stage = video.getBoundingClientRect();
     const targetRatio = 16 / 10;
@@ -319,7 +319,7 @@ function captureFrame(){
         sx = 0;
         sy = (vh - sh) / 2;
     }
-
+    console.log("CANVAS crop:", sw, "x", sh, "ratio:", (sw/sh).toFixed(3));
     // Canvas matches the stage's display ratio, drawn from the crop
     captureCanvas.width  = sw;
     captureCanvas.height = sh;
