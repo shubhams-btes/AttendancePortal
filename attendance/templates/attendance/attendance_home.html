@@ -171,7 +171,8 @@ let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 function speak(text){
     window.speechSynthesis.cancel();
     const s = new SpeechSynthesisUtterance(text);
-    s.lang = "en-US"; s.rate = 1; s.pitch = 1; s.volume = 1;
+    // s.lang = "en-US";
+    s.rate = 1; s.pitch = 1; s.volume = 1;
     window.speechSynthesis.speak(s);
 }
 
