@@ -254,9 +254,34 @@ function startCountdown(){
 }
 
 function captureFrame(){
-    captureCanvas.width  = video.videoWidth;
-    captureCanvas.height = video.videoHeight;
-    captureCanvas.getContext("2d").drawImage(video, 0, 0);
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+
+    // The stage's display aspect ratio (16:10 from your CSS)
+    const stage = video.getBoundingClientRect();
+    const targetRatio = stage.width / stage.height;
+    const videoRatio  = vw / vh;
+
+    // Compute the cover-crop rectangle from the source video
+    let sx, sy, sw, sh;
+    if (videoRatio > targetRatio) {
+        // video is wider → crop left/right
+        sh = vh;
+        sw = vh * targetRatio;
+        sx = (vw - sw) / 2;
+        sy = 0;
+    } else {
+        // video is taller → crop top/bottom
+        sw = vw;
+        sh = vw / targetRatio;
+        sx = 0;
+        sy = (vh - sh) / 2;
+    }
+
+    // Canvas matches the stage's display ratio, drawn from the crop
+    captureCanvas.width  = sw;
+    captureCanvas.height = sh;
+    captureCanvas.getContext("2d").drawImage(video, sx, sy, sw, sh, 0, 0, sw, sh);
 
     freezeCanvas.width  = captureCanvas.width;
     freezeCanvas.height = captureCanvas.height;
