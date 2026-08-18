@@ -515,16 +515,28 @@ function speak(text){
     s.rate = 1; s.pitch = 1; s.volume = 1;
     window.speechSynthesis.speak(s);
 }
-function beep(duration = 300, frequency = 1000){
+function beepSuccess(){
     if(audioContext.state === "suspended"){ audioContext.resume(); }
+    playTone(880,  0,   120, "sine");   // rising two-note = "good"
+    playTone(1320, 130, 160, "sine");
+}
+
+function beepError(){
+    if(audioContext.state === "suspended"){ audioContext.resume(); }
+    playTone(220, 0,   200, "square");  // low harsh double-buzz = "bad"
+    playTone(180, 230, 260, "square");
+}
+
+function playTone(freq, startMs, durMs, type = "sine"){
+    const t0 = audioContext.currentTime + startMs/1000;
     const osc = audioContext.createOscillator();
     const gain = audioContext.createGain();
-    osc.type = "sine"; osc.frequency.value = frequency;
+    osc.type = type; osc.frequency.value = freq;
     osc.connect(gain); gain.connect(audioContext.destination);
-    gain.gain.setValueAtTime(0.6, audioContext.currentTime);
-    osc.start();
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + duration / 1000);
-    osc.stop(audioContext.currentTime + duration / 1000);
+    gain.gain.setValueAtTime(0.5, t0);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + durMs/1000);
+    osc.start(t0);
+    osc.stop(t0 + durMs/1000);
 }
 
 let stream = null;
@@ -682,7 +694,9 @@ async function sendAttendance(){
             setScan("Verified", "Welcome " + data.student);
             setRecognition("Verified \u2022 " + data.confidence + "%");
             setAttendance("Marked \u2713 " + data.student, "ok");
-            beep(150, 1000);
+            beepSuccess()
+            cameraStage.classList.add("flash-ok");
+            setTimeout(()=>cameraStage.classList.remove("flash-ok"), 1000);
             speak(`Access granted. Welcome ${data.student}. Attendance marked.`);
             resetAfter(3500);            // definitive success → reset for next person
         }
@@ -695,7 +709,10 @@ async function sendAttendance(){
             setScan("Not Verified", data.message);
             setRecognition("Failed");
             setAttendance(data.message, "bad");
-            beep(400, 250);
+            beepError()
+            // failure branch:
+            cameraStage.classList.add("flash-bad");
+            setTimeout(()=>cameraStage.classList.remove("flash-bad"), 1000);
             const msg = (data.message || "").toLowerCase();
             if(msg.includes("already")) speak("Attendance already marked for today.");
             else if(msg.includes("holiday")) speak("Today is a holiday.");
