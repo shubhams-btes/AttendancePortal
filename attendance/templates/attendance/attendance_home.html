@@ -298,7 +298,7 @@ function startCountdown(){
 function captureFrame(){
     const vw = video.videoWidth;
     const vh = video.videoHeight;
-    console.log("VIDEO native:", vw, "x", vh, "ratio:", (vw/vh).toFixed(3));
+    alert("VIDEO native:", vw, "x", vh, "ratio:", (vw/vh).toFixed(3));
     // The stage's display aspect ratio (16:10 from your CSS)
     const stage = video.getBoundingClientRect();
     const targetRatio = 16 / 10;
@@ -319,7 +319,7 @@ function captureFrame(){
         sx = 0;
         sy = (vh - sh) / 2;
     }
-    console.log("CANVAS crop:", sw, "x", sh, "ratio:", (sw/sh).toFixed(3));
+    alert("CANVAS crop:", sw, "x", sh, "ratio:", (sw/sh).toFixed(3));
     // Canvas matches the stage's display ratio, drawn from the crop
     captureCanvas.width  = sw;
     captureCanvas.height = sh;
@@ -430,22 +430,57 @@ function resetScanner(){
     setAttendance("Not Marked");
 }
 
+// function initializeFaceDetection(){
+//     try {
+//         detector = new FaceDetection({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}` });
+//         detector.setOptions({ model: "short", minDetectionConfidence: .75 });
+//         detector.onResults(onFaceResults);
+//         const camera = new Camera(video, {
+//             onFrame: async () => { await detector.send({ image: video }); },
+//             width: 640, height: 480
+//         });
+//         camera.start();
+//     } catch(e) {
+//         setScan("Detection Unavailable", "Face detection failed to load. Check your connection.");
+//         setDetection("Detection error");
+//         console.error("MediaPipe init failed:", e);
+//     }
+// }
+
 function initializeFaceDetection(){
     try {
-        detector = new FaceDetection({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}` });
+        if (typeof FaceDetection === "undefined" || typeof Camera === "undefined") {
+            setDetection("MediaPipe library did not load");
+            setScan("Detection Unavailable", "Face detection library failed to load");
+            return;
+        }
+
+        detector = new FaceDetection({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`
+        });
         detector.setOptions({ model: "short", minDetectionConfidence: .75 });
         detector.onResults(onFaceResults);
+
         const camera = new Camera(video, {
-            onFrame: async () => { await detector.send({ image: video }); },
+            onFrame: async () => {
+                try {
+                    await detector.send({ image: video });
+                } catch(e) {
+                    setDetection("Detection frame error: " + e.message);
+                }
+            },
             width: 640, height: 480
         });
         camera.start();
+
+        setDetection("Detection ready — waiting for face...");
     } catch(e) {
-        setScan("Detection Unavailable", "Face detection failed to load. Check your connection.");
-        setDetection("Detection error");
-        console.error("MediaPipe init failed:", e);
+        setDetection("Init error: " + e.message);
+        setScan("Detection Failed", e.message);
+        alert("FaceDetection init failed:", e);
     }
 }
+
 
 function onFaceResults(results){
     if(scanning) return;
