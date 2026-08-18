@@ -261,7 +261,7 @@ function captureFrame(){
 
     // The stage's display aspect ratio (16:10 from your CSS)
     const stage = video.getBoundingClientRect();
-    const targetRatio = stage.width / stage.height;
+    const targetRatio = 16 / 10;
     const videoRatio  = vw / vh;
 
     // Compute the cover-crop rectangle from the source video
