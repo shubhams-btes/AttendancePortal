@@ -34,6 +34,7 @@ def recognize_face(image_path, threshold=0.65):
 
         return {
             "success": False,
+            "retry": True,
             "message": "Unable to read image."
         }
 
@@ -43,6 +44,7 @@ def recognize_face(image_path, threshold=0.65):
 
         return {
             "success": False,
+            "retry": True,
             "message": "No face detected."
         }
 
@@ -50,6 +52,7 @@ def recognize_face(image_path, threshold=0.65):
 
         return {
             "success": False,
+            "retry": True,
             "message": "Multiple faces detected."
         }
 
@@ -85,26 +88,11 @@ def recognize_face(image_path, threshold=0.65):
 
             best_student = profile.student
 
-    if best_student is None:
-
-        return {
-            "success": False,
-            "message": "Unauthorized access detected."
-        }
-
-    if best_similarity < threshold:
-
-        return {
-            "success": False,
-            "message": "Face not recognized."
-        }
+    if best_student is None or best_similarity < threshold:
+        return {"success": False, "retry": False, "message": "Face not recognized."}
 
     return {
-
         "success": True,
-
         "student": best_student,
-
-        "confidence": round(float(best_similarity * 100), 2)
-
+        "confidence": round(float(best_similarity * 100), 2),
     }
