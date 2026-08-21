@@ -39,6 +39,17 @@
         
 
     </div>
+
+    <button id="soundBtn" class="sound-btn" title="Enable sound" aria-label="Toggle sound">
+    <!-- Muted icon (shown by default) -->
+    <svg class="icon-muted" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+    <!-- Sound-on icon (shown when enabled) -->
+    <svg class="icon-on" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+        <path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    </svg>
+</button>
 </header>
 
 <!-- ==========================================================
@@ -167,10 +178,16 @@
 
 
 let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let soundEnabled = false;
+
+const soundBtn = document.getElementById("soundBtn");
+const iconMuted = soundBtn.querySelector(".icon-muted");
+const iconOn    = soundBtn.querySelector(".icon-on");
 
 
 
 function speak(text){
+    if (!soundEnabled) return;
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const s = new SpeechSynthesisUtterance(text);
@@ -478,6 +495,32 @@ startCamera();
 
 window.addEventListener("beforeunload", () => {
     if(stream) stream.getTracks().forEach(t => t.stop());
+});
+
+
+soundBtn.addEventListener("click", () => {
+    soundEnabled = !soundEnabled;
+
+    if (soundEnabled) {
+        // This tap is the user gesture — unlock iOS audio NOW, inside the handler
+        if (audioContext.state === "suspended") audioContext.resume();
+        if (window.speechSynthesis) {
+            const warm = new SpeechSynthesisUtterance("");
+            warm.volume = 0;
+            window.speechSynthesis.speak(warm);   // primes speech on iOS
+        }
+        soundBtn.classList.add("enabled");
+        soundBtn.title = "Sound on";
+        iconMuted.style.display = "none";
+        iconOn.style.display = "block";
+    } else {
+        // Muting — stop any ongoing speech
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        soundBtn.classList.remove("enabled");
+        soundBtn.title = "Sound off";
+        iconMuted.style.display = "block";
+        iconOn.style.display = "none";
+    }
 });
 
 </script>
