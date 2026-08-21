@@ -434,3 +434,24 @@ a{text-decoration:none;color:inherit;}
 }
 .camera-stage.flash-ok  { box-shadow: 0 0 0 5px #16a34a, 0 20px 45px rgba(8,27,58,.22) !important; }
 .camera-stage.flash-bad { box-shadow: 0 0 0 5px #dc2626, 0 20px 45px rgba(8,27,58,.22) !important; }
+
+.fullscreen-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 60;
+    background: rgba(9,14,24,.72);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fullscreen-btn:hover { background: rgba(9,14,24,.9); }
+
+/* Hide the button whenever the document is in fullscreen */
+:fullscreen .fullscreen-btn { display: none; }
+:-webkit-full-screen .fullscreen-btn { display: none; }
