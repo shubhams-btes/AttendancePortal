@@ -12,7 +12,7 @@ class StudentRegistrationForm(forms.ModelForm):
         model = Student
 
         fields = [
-            "batch",
+            "batch_code",
             "first_name",
             "last_name",
             "registration_ID",
@@ -25,7 +25,7 @@ class StudentRegistrationForm(forms.ModelForm):
 
         widgets = {
 
-            "batch": forms.Select(
+            "batch_code": forms.Select(
                 attrs={
                     "class": "form-select"
                 }
@@ -92,7 +92,7 @@ class StudentRegistrationForm(forms.ModelForm):
 
         super().__init__(*args, **kwargs)
 
-        self.fields["batch"].queryset = Batch.objects.filter(
+        self.fields["batch_code"].queryset = Batch.objects.filter(
             is_registration_open=True,
             
             status__in=[Batch.Status.ACTIVE, Batch.Status.UPCOMING]
@@ -106,7 +106,7 @@ class StudentUpdateForm(forms.ModelForm):
         model = Student
 
         fields = [
-            "batch",
+            "batch_code",
             "first_name",
             "last_name",
             "email",
@@ -118,7 +118,7 @@ class StudentUpdateForm(forms.ModelForm):
 
         widgets = {
 
-            "batch": forms.Select(
+            "batch_code": forms.Select(
                 attrs={
                     "class": "form-select"
                 }
@@ -182,7 +182,7 @@ class StudentSearchForm(forms.Form):
         )
     )
 
-    batch = forms.ModelChoiceField(
+    batch_code = forms.ModelChoiceField(
         queryset=Batch.objects.all().order_by("batch_code"),
         required=False,
         empty_label="All Batches",
