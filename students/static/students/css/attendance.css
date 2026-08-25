@@ -452,3 +452,9 @@ a{text-decoration:none;color:inherit;}
 }
 .sound-btn:hover { background: rgba(9,14,24,.9); }
 .sound-btn.enabled { background: #16a34a; }   /* green when sound is on */
+#soundBtn {
+    position: absolute;
+    top: 50%;
+    right: 28px;
+    transform: translateY(-50%);
+}
