@@ -126,6 +126,14 @@
 
               Batches
             </a>
+            <a
+              href="{% url 'batches:course_list' %}"
+              class="list-group-item list-group-item-action"
+            >
+              <i class="bi bi-book"></i>
+
+              Courses
+            </a>
             {% if user.role == "TRAINER" %}
               <a
                 href="{% url 'attendance:oo_manage' %}"
@@ -170,6 +178,8 @@
 
               Reports
             </a>
+
+            
           </div>
         </div>
 
