@@ -21,18 +21,14 @@ My Profile
 
             <div class="card-body text-center">
 
-                {% if user.avatar %}
-
+                {% if user.avatar and 'default' not in user.avatar.name %}
                     <img src="{{ user.avatar.url }}"
-                         class="profile-image mb-3"
-                         id="profile-preview">
-
+                        class="profile-image mb-3"
+                        id="profile-preview">
                 {% else %}
-
                     <img src="{% static 'accounts/images/default-user.png' %}"
-                         class="profile-image mb-3"
-                         id="profile-preview">
-
+                        class="profile-image mb-3"
+                        id="profile-preview">
                 {% endif %}
 
                 <h4 class="mb-1">
