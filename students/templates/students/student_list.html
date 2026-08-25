@@ -128,9 +128,9 @@ Students
                     <td>
 
                         {% if student.photo %}
-                            <img src="{{ student.photo.url }}" class="rounded-circle border" width="55" height="55">
+                            <img src="{{ student.photo.url }}" class="thumbnail">
                         {% else %}
-                            <img src="{% static 'students/images/default-user.png' %}" class="rounded-circle border" width="55" height="55">
+                            <img src="{% static 'students/images/default-user.png' %}" class="thumbnail">
                         {% endif %}
 
                     </td>
