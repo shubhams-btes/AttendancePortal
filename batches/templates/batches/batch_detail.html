@@ -359,17 +359,26 @@ Batch Details
                                     {% endif %}
 
                                 </td>
-                                <td>    
+                                
+                                <td>
                                     {% if request.user.role == "ADMIN" or batch.trainer == request.user %}
+                                    <form method="post"
+                                        action="{% url 'students:mark_present' student.id %}"
+                                        style="display:inline; margin:0"
+                                        onsubmit="return confirm('Mark {{ student.first_name }} present for today?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-check2-circle"></i> Present
+                                        </button>
+                                    </form>
                                     <button type="button"
                                             class="btn btn-sm btn-outline-secondary mark-leave-btn"
                                             data-student-id="{{ student.id }}"
                                             data-student-name="{{ student.first_name }} {{ student.last_name }}">
                                         <i class="bi bi-calendar-x"></i> Leave
                                     </button>
-                                {% endif %}
+                                    {% endif %}
                                 </td>
-
                             </tr>
 
                             {% empty %}

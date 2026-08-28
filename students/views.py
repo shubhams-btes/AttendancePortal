@@ -339,3 +339,70 @@ class MarkStudentLeaveView(LoginRequiredMixin, View):
             messages.warning(request, " ".join(parts) + " No leave was recorded.")
 
         return redirect("batches:batch_detail", pk=student.batch_id)
+    
+class MarkStudentPresentView(LoginRequiredMixin, View):
+    """Trainer marks a student PRESENT for TODAY ONLY (WFH fallback when
+    face-recognition capture didn't happen). Refuses if the student is
+    already marked anything other than ABSENT for today."""
+
+    def post(self, request, pk):
+        student = get_object_or_404(Student, pk=pk)
+        user = request.user
+
+        # Same permission gate as the leave view.
+        if user.role != "ADMIN" and student.batch.trainer_id != user.id:
+            messages.error(request, "You can only mark attendance for students in your own batches.")
+            return redirect("batches:batch_detail", pk=student.batch_id)
+
+        today = timezone.localdate()          # server-stamped; today only
+
+        # Don't mark before the student registered.
+        reg_date = student.registration_date.date() if student.registration_date else None
+        if reg_date and today < reg_date:
+            messages.error(request, "This student was not registered on this date.")
+            return redirect("batches:batch_detail", pk=student.batch_id)
+
+        # Optional: block on holidays/weekends, matching the leave logic.
+        if is_holiday(today):
+            messages.error(request, "Today is a weekend or holiday.")
+            return redirect("batches:batch_detail", pk=student.batch_id)
+
+        try:
+            with transaction.atomic():
+                existing = (
+                    Attendance.objects
+                    .select_for_update()
+                    .filter(student=student, attendance_date=today)
+                    .first()
+                )
+
+                if existing is None:
+                    # No record yet → create PRESENT.
+                    Attendance.objects.create(
+                        student=student,
+                        attendance_date=today,
+                        attendance_time=timezone.localtime().time(),
+                        status=Attendance.Status.PRESENT,
+                    )
+                    messages.success(request, f"{student.first_name} marked present for today.")
+
+                elif existing.status == Attendance.Status.ABSENT:
+                    # Absent → upgrade to PRESENT.
+                    existing.status = Attendance.Status.PRESENT
+                    existing.attendance_time = timezone.localtime().time()
+                    existing.reason = None
+                    existing.save(update_fields=["status", "attendance_time", "reason"])
+                    messages.success(request, f"{student.first_name} marked present for today.")
+
+                else:
+                    # Already PRESENT or LEAVE → refuse.
+                    label = existing.get_status_display()
+                    messages.error(
+                        request,
+                        f"{student.first_name} is already marked {label} for today and cannot be changed here."
+                    )
+        except IntegrityError:
+            # Race: a row appeared between our check and create.
+            messages.error(request, "This student's attendance for today was just updated. Please refresh.")
+
+        return redirect("batches:batch_detail", pk=student.batch_id)

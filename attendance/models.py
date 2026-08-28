@@ -55,8 +55,7 @@ class Attendance(models.Model):
     def __str__(self):
         return f"{self.student} - {self.attendance_date}"
     
-from batches.models import Batch
-from accounts.models import CustomUser
+
 
 class Holiday(models.Model):
 
