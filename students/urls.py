@@ -10,7 +10,8 @@ from .views import (
     StudentActivateView,
     StudentDeactivateView,
     MarkStudentLeaveView,
-    MarkStudentPresentView
+    MarkStudentPresentView,
+    BulkApproveStudentsView,
 )
 
 app_name = "students"
@@ -74,5 +75,7 @@ urlpatterns = [
     ),
     path("<int:pk>/mark-leave/", MarkStudentLeaveView.as_view(), name="mark_leave"),
     path("students/<int:pk>/mark-present/", MarkStudentPresentView.as_view(), name="mark_present"),
+    # students/urls.py
+path("students/bulk-approve/", BulkApproveStudentsView.as_view(), name="bulk_approve"),
 
 ]

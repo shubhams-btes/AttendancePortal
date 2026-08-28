@@ -32,6 +32,7 @@ from django.db.models import Case, When, IntegerField
 
 from attendance.models import Attendance
 from attendance.utils import is_holiday
+from django.db import transaction
 
 
 
@@ -45,33 +46,6 @@ class StudentRegistrationView(CreateView):
 
     success_url = reverse_lazy("students:registration_success")
 
-    # def form_valid(self, form):
-
-    #     with transaction.atomic():
-
-    #         self.object = form.save()
-
-    #         success, message = create_face_profile(self.object)
-
-    #         if not success:
-
-    #             self.object.delete()
-
-    #             form.add_error(
-    #                 "photo",
-    #                 message
-    #             )
-
-    #             return self.form_invalid(form)
-
-    #     messages.success(
-    #         self.request,
-    #         "Registration completed successfully."
-    #     )
-
-    #     return HttpResponseRedirect(
-    #         self.get_success_url()
-    #     )
 
 
 class RegistrationSuccessView(TemplateView):
@@ -87,17 +61,18 @@ class StudentListView(LoginRequiredMixin, ListView):
 
     context_object_name = "students"
 
-    paginate_by = 15
+    paginate_by = 15    
 
     def get_queryset(self):
 
         queryset = Student.objects.select_related("batch").annotate(
             status_rank=Case(
-                When(status="INACTIVE", then=2),
-                default=1,
+                When(status="PENDING", then=0),    # needs approval → top
+                When(status="INACTIVE", then=2),   # deactivated → bottom
+                default=1,                          # ACTIVE → middle
                 output_field=IntegerField(),
-            )
-        ).order_by("status_rank", "first_name")
+            ),
+        ).order_by("status_rank", "-registration_date", "-id")
 
         user = self.request.user
 
@@ -406,3 +381,20 @@ class MarkStudentPresentView(LoginRequiredMixin, View):
             messages.error(request, "This student's attendance for today was just updated. Please refresh.")
 
         return redirect("batches:batch_detail", pk=student.batch_id)
+    
+
+class BulkApproveStudentsView(LoginRequiredMixin, View):
+    def post(self, request):
+        if request.user.role != "ADMIN":
+            messages.error(request, "You are not permitted to do this.")
+            return redirect("students:student_list")
+
+        with transaction.atomic():
+            updated = Student.objects.filter(status="PENDING").update(status="ACTIVE")
+
+        if updated:
+            messages.success(request, f"{updated} student(s) approved.")
+        else:
+            messages.info(request, "No pending students to approve.")
+
+        return redirect("students:student_list")
