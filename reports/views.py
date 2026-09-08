@@ -336,6 +336,7 @@ class MonthlyAttendanceView(LoginRequiredMixin, TemplateView):
             report.append(row)
             
         total_absent = sum(row["absent"] for row in report)
+        total_present = sum(row["present"] for row in report)
         total_working = sum(row["present"] + row["absent"] for row in report)
 
         absenteeism_rate = 0
@@ -345,6 +346,7 @@ class MonthlyAttendanceView(LoginRequiredMixin, TemplateView):
         context["total_absent"] = total_absent
         context["total_working"] = total_working
         context["absenteeism_rate"] = absenteeism_rate
+        context["total_present"] = total_present
 
         context["report"] = report
 
