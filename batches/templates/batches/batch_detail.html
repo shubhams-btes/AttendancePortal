@@ -312,19 +312,19 @@ Batch Details
 
                             <tr>
 
-                                <td>
+                                <td class="text-nowrap">
 
                                     {{ student.first_name }} {{ student.last_name }}
 
                                 </td>
 
-                                <td>
+                                <td class="text-nowrap">
 
                                     {{ student.email }}
 
                                 </td>
 
-                                <td>
+                                <td class="text-nowrap">
 
                                     {{ student.phone }}
 
@@ -360,7 +360,7 @@ Batch Details
 
                                 </td>
                                 
-                                <td>
+                                <td class="text-nowrap">
                                     {% if request.user.role == "ADMIN" or batch.trainer == request.user %}
                                     <form method="post"
                                         action="{% url 'students:mark_present' student.id %}"
