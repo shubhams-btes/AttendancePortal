@@ -1,7 +1,9 @@
 from datetime import date,datetime
 import calendar
 
-
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
@@ -11,6 +13,8 @@ from students.models import Student
 from batches.models import Batch
 from attendance.utils import is_holiday
 from attendance.utils import holiday_type
+from .services import build_monthly_report,build_monthly_workbook
+from django.http import HttpResponse
 
 
 WEEKEND_DAYS = [5, 6]
@@ -197,143 +201,135 @@ class MonthlyAttendanceView(LoginRequiredMixin, TemplateView):
             )
         )
 
-        students = Student.objects.select_related(
-            "batch"
-        ).filter(
-            status=Student.Status.ACTIVE
-        )
+        # students = Student.objects.select_related(
+        #     "batch"
+        # ).filter(
+        #     status=Student.Status.ACTIVE
+        # )
 
         batches = Batch.objects.all()
 
         if self.request.user.role == "TRAINER":
 
-            batches = batches.filter(
-                trainer=self.request.user
-            )
+            batches = batches.filter(trainer=self.request.user)
 
-            students = students.filter(
-                batch__trainer=self.request.user
-            )
+            # students = students.filter(batch__trainer=self.request.user)
 
         batch_id = self.request.GET.get("batch")
 
-        if batch_id:
 
-            students = students.filter(
-                batch_id=batch_id
-            )
+        report, total_days = build_monthly_report(self.request.user, year, month, batch_id)
+        # total_days = calendar.monthrange(
+        #     year,
+        #     month
+        # )[1]
 
-        total_days = calendar.monthrange(
-            year,
-            month
-        )[1]
+        # attendance = Attendance.objects.filter(
 
-        attendance = Attendance.objects.filter(
+        #     attendance_date__year=year,
 
-            attendance_date__year=year,
+        #     attendance_date__month=month,
 
-            attendance_date__month=month,
+        #     student__in=students
 
-            student__in=students
+        # )
 
-        )
+        # attendance_map = {}
 
-        attendance_map = {}
+        # for record in attendance:
 
-        for record in attendance:
+        #     attendance_map[
+        #         (record.student_id, record.attendance_date.day)
+        #     ] = record.status
 
-            attendance_map[
-                (record.student_id, record.attendance_date.day)
-            ] = record.status
+        # report = []
 
-        report = []
+        # for student in students:
 
-        for student in students:
+        #     row = {
 
-            row = {
+        #         "student": student,
 
-                "student": student,
+        #         "days": [],
 
-                "days": [],
+        #         "present": 0,
 
-                "present": 0,
+        #         "leave": 0,
 
-                "leave": 0,
+        #         "absent": 0,
 
-                "absent": 0,
+        #         "percentage": 0
 
-                "percentage": 0
+        #     }
 
-            }
+        #     today = date.today()
 
-            today = date.today()
+        #     for day in range(1, total_days + 1):
 
-            for day in range(1, total_days + 1):
+        #         current_date = date(year, month, day)
 
-                current_date = date(year, month, day)
+        #          # Future dates
+        #         if current_date > today:
+        #             ht = holiday_type(current_date, student.batch)
+        #             if ht == "OO":
+        #                 row["days"].append("OO")
+        #             elif ht in ("WEEKEND", "HOLIDAY"):
+        #                 row["days"].append("H")
+        #             # Future: blank UNLESS leave was pre-marked for this day
+        #             elif attendance_map.get((student.id, day)) == Attendance.Status.LEAVE:
+        #                 row["days"].append("L")
+        #                 row["leave"] += 1
+        #             else:
+        #                 row["days"].append("-")
+        #             continue
 
-                 # Future dates
-                if current_date > today:
-                    ht = holiday_type(current_date, student.batch)
-                    if ht == "OO":
-                        row["days"].append("OO")
-                    elif ht in ("WEEKEND", "HOLIDAY"):
-                        row["days"].append("H")
-                    # Future: blank UNLESS leave was pre-marked for this day
-                    elif attendance_map.get((student.id, day)) == Attendance.Status.LEAVE:
-                        row["days"].append("L")
-                        row["leave"] += 1
-                    else:
-                        row["days"].append("-")
-                    continue
+        #         # Sunday
+        #         ht = holiday_type(current_date, student.batch)
 
-                # Sunday
-                ht = holiday_type(current_date, student.batch)
+        #         if ht == "OO":
+        #             row["days"].append("OO")
+        #             continue
 
-                if ht == "OO":
-                    row["days"].append("OO")
-                    continue
+        #         if ht in ("WEEKEND", "HOLIDAY"):
+        #             row["days"].append("H")
+        #             continue
 
-                if ht in ("WEEKEND", "HOLIDAY"):
-                    row["days"].append("H")
-                    continue
+        #         # Before student registration
+        #         if student.registration_date:
 
-                # Before student registration
-                if student.registration_date:
+        #             if current_date < student.registration_date.date():
 
-                    if current_date < student.registration_date.date():
+        #                 row["days"].append("-")
 
-                        row["days"].append("-")
+        #                 continue
 
-                        continue
+        #         attendance = attendance_map.get((student.id, day))
 
-                attendance = attendance_map.get((student.id, day))
+        #         if attendance == Attendance.Status.PRESENT:
+        #             row["days"].append("P")
+        #             row["present"] += 1
 
-                if attendance == Attendance.Status.PRESENT:
-                    row["days"].append("P")
-                    row["present"] += 1
+        #         elif attendance == Attendance.Status.LEAVE:
+        #             row["days"].append("L")
+        #             row["leave"] += 1
 
-                elif attendance == Attendance.Status.LEAVE:
-                    row["days"].append("L")
-                    row["leave"] += 1
+        #         else:
+        #             row["days"].append("A")
+        #             row["absent"] += 1
 
-                else:
-                    row["days"].append("A")
-                    row["absent"] += 1
+        #     working_days = row["present"] + row["absent"]
 
-            working_days = row["present"] + row["absent"]
+        #     if working_days:
 
-            if working_days:
+        #         row["percentage"] = round(
 
-                row["percentage"] = round(
+        #             ((row["present"]) / working_days) * 100,
 
-                    ((row["present"]) / working_days) * 100,
+        #             2
 
-                    2
+        #         )
 
-                )
-
-            report.append(row)
+        #     report.append(row)
             
         total_absent = sum(row["absent"] for row in report)
         total_present = sum(row["present"] for row in report)
@@ -622,4 +618,28 @@ class StudentHistoryView(LoginRequiredMixin, TemplateView):
         context["percentage"] = percentage
 
         return context
-    
+
+
+class ExportMonthlyAttendanceView(LoginRequiredMixin, View):
+    def get(self, request):
+        today = date.today()
+        year = int(request.GET.get("year", today.year))
+        month = int(request.GET.get("month", today.month))
+        batch_id = request.GET.get("batch")
+
+        report, total_days = build_monthly_report(request.user, year, month, batch_id)
+
+        if not report:
+            messages.warning(request, "No data to export for the selected filters.")
+            return redirect("reports:monthly")
+
+        wb = build_monthly_workbook(report, total_days, year, month)
+
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = (
+            f'attachment; filename="Monthly_Attendance_{month}_{year}.xlsx"'
+        )
+        wb.save(response)
+        return response

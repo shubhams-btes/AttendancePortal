@@ -97,16 +97,14 @@ Monthly Attendance Report
 
                 </div>
 
-                <div class="col-md-3">
-
+                <div class="col-md-3 d-flex gap-2 align-items-end">
                     <button class="btn btn-primary w-100">
-
-                        <i class="bi bi-search"></i>
-
-                        Generate Report
-
+                        <i class="bi bi-search"></i> Generate
                     </button>
-
+                    <a href="{% url 'reports:monthly_export' %}?month={{ month }}&year={{ year }}&batch={{ selected_batch }}"
+                    class="btn btn-success w-100">
+                        <i class="bi bi-download"></i> Export
+                    </a>
                 </div>
 
             </div>

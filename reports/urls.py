@@ -6,6 +6,7 @@ from .views import (
     MonthlyAttendanceView,
     BatchAttendanceView,
     StudentHistoryView,
+    ExportMonthlyAttendanceView
 )
 
 app_name = "reports"
@@ -41,5 +42,6 @@ urlpatterns = [
         StudentHistoryView.as_view(),
         name="student",
     ),
+    path("monthly/export/", ExportMonthlyAttendanceView.as_view(), name="monthly_export"),
 
 ]
