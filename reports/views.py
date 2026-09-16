@@ -623,9 +623,26 @@ class StudentHistoryView(LoginRequiredMixin, TemplateView):
 class ExportMonthlyAttendanceView(LoginRequiredMixin, View):
     def get(self, request):
         today = date.today()
-        year = int(request.GET.get("year", today.year))
-        month = int(request.GET.get("month", today.month))
-        batch_id = request.GET.get("batch")
+
+        def _as_int(value, default=None):
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return default
+
+        # Missing, blank, or non-numeric year/month falls back to the current month.
+        year = _as_int(request.GET.get("year"), today.year)
+        month = _as_int(request.GET.get("month"), today.month)
+
+        if not 1 <= month <= 12:
+            messages.error(request, "Please select a valid month.")
+            return redirect("reports:monthly")
+
+        # Require a batch. Treat "", "None", "0" and non-numeric values as "not selected".
+        batch_id = _as_int(request.GET.get("batch"))
+        if not batch_id:
+            messages.warning(request, "Please select a batch before exporting.")
+            return redirect("reports:monthly")
 
         report, total_days = build_monthly_report(request.user, year, month, batch_id)
 
