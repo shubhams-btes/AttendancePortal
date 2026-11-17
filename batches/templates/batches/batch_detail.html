@@ -282,7 +282,7 @@ Batch Details
 
             <div class="card-body">
 
-                {% if batch.students.all %}
+                {% if students %}
 
                 <div class="table-responsive">
 
@@ -308,7 +308,7 @@ Batch Details
 
                         <tbody>
 
-                            {% for student in batch.students.all %}
+                            {% for student in students %}
 
                             <tr>
 
@@ -361,22 +361,30 @@ Batch Details
                                 </td>
                                 
                                 <td class="text-nowrap">
-                                    {% if request.user.role == "ADMIN" or batch.trainer == request.user %}
-                                    <form method="post"
-                                        action="{% url 'students:mark_present' student.id %}"
-                                        style="display:inline; margin:0"
-                                        onsubmit="return confirm('Mark {{ student.first_name }} present for today?');">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-outline-success">
-                                            <i class="bi bi-check2-circle"></i> P
+                                    {% if student.todays_attendance %}
+                                        {% if student.todays_attendance.status == "PRESENT" %}
+                                            <span class="badge bg-success">{{ student.todays_attendance.get_status_display }}</span>
+                                        {% elif student.todays_attendance.status == "LEAVE" %}
+                                            <span class="badge bg-warning text-dark">{{ student.todays_attendance.get_status_display }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ student.todays_attendance.get_status_display }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if request.user.role == "ADMIN" or batch.trainer == request.user %}
+                                        <form method="post" action="{% url 'students:mark_present' student.id %}"
+                                            style="display:inline; margin:0"
+                                            onsubmit="return confirm('Mark {{ student.first_name }} present for today?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                <i class="bi bi-check2-circle"></i> P
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary mark-leave-btn"
+                                                data-student-id="{{ student.id }}"
+                                                data-student-name="{{ student.first_name }} {{ student.last_name }}">
+                                            <i class="bi bi-calendar-x"></i> L
                                         </button>
-                                    </form>
-                                    <button type="button"
-                                            class="btn btn-sm btn-outline-secondary mark-leave-btn"
-                                            data-student-id="{{ student.id }}"
-                                            data-student-name="{{ student.first_name }} {{ student.last_name }}">
-                                        <i class="bi bi-calendar-x"></i> L
-                                    </button>
+                                        {% endif %}
                                     {% endif %}
                                 </td>
                             </tr>
@@ -385,7 +393,7 @@ Batch Details
 
                             <tr>
 
-                                <td colspan="4"
+                                <td colspan="5"
                                     class="text-center text-muted">
 
                                     No students enrolled yet.

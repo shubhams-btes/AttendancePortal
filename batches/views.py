@@ -10,6 +10,7 @@ from django.views.generic import (
 )
 
 from accounts.models import CustomUser
+from attendance.models import Attendance
 from accounts.views import AdminRequiredMixin
 from .forms import CourseForm, BatchForm
 from .models import Course, Batch
@@ -112,6 +113,28 @@ class BatchDetailView(LoginRequiredMixin, DetailView):
         if self.request.user.role == CustomUser.Role.ADMIN:
             return qs
         return qs.filter(trainer=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        batch = self.object
+        today = timezone.localdate()
+
+        # Fetch the batch's students
+        students = list(batch.students.all())   # adjust related_name/filter if needed
+
+        # Map each student → their attendance record for today
+        today_map = {
+            a.student_id: a
+            for a in Attendance.objects.filter(
+                student__in=students,
+                attendance_date=today
+            )
+        }
+        for s in students:
+            s.todays_attendance = today_map.get(s.id)
+
+        context["students"] = students
+        return context
 
 
 class BatchCreateView(LoginRequiredMixin, AdminRequiredMixin, CreateView):
