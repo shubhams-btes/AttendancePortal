@@ -46,7 +46,7 @@ Batch Management
                 <thead class="table-light">
 
                     <tr>
-
+                        <th>#</th>
                         <th>Batch Code</th>
 
                         <th>Course</th>
@@ -70,7 +70,7 @@ Batch Management
                     {% for batch in batches %}
 
                     <tr>
-
+                        <td>{{ forloop.counter }}</td>
                         <td>
 
                             <strong>

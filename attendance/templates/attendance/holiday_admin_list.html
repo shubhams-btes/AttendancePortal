@@ -15,11 +15,12 @@
     <div class="card-body p-0">
         <table class="table table-bordered mb-0">
             <thead class="table-dark">
-                <tr><th>Type</th><th>Scope</th><th>From</th><th>To</th><th>Reason</th><th>Created By</th></tr>
+                <tr><th>#</th><th>Type</th><th>Scope</th><th>From</th><th>To</th><th>Reason</th><th>Created By</th></tr>
             </thead>
             <tbody>
                 {% for h in holidays %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>
                         {% if h.type == "OO" %}
                             <span class="badge bg-warning text-dark">OO</span>

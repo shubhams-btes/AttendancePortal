@@ -104,7 +104,7 @@ Trainer Management
                 <thead>
 
                 <tr>
-
+                    <th>#</th>
                     <th width="70">
                         Image
                     </th>
@@ -142,7 +142,7 @@ Trainer Management
                 {% for trainer in trainers %}
 
                 <tr>
-
+                    <td>{{ forloop.counter }}</td>
                     <td>
 
                         {% if trainer.avatar %}

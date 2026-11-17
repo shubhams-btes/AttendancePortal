@@ -189,6 +189,7 @@ Dashboard
                         <thead>
 
                         <tr>
+                            <th>#</th>
 
                             <th>Batch</th>
 
@@ -205,7 +206,7 @@ Dashboard
                         {% for batch in recent_batches %}
 
                         <tr>
-
+                            <td>{{ forloop.counter }}</td>
                             <td>
 
                                 {{ batch.batch_code }}
@@ -277,7 +278,7 @@ Dashboard
                         <thead>
 
                         <tr>
-
+                            <th>#</th>
                             <th>Name</th>
 
                             <th>Batch</th>
@@ -293,7 +294,7 @@ Dashboard
                         {% for student in recent_students %}
 
                         <tr>
-
+                            <td>{{ forloop.counter }}</td>
                             <td>
 
                                 {{ student.first_name }} {{ student.last_name }}

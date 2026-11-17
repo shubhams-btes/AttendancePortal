@@ -46,7 +46,7 @@ Course Management
                 <thead class="table-light">
 
                     <tr>
-
+                        <th>#</th>
                         <th>Course Name</th>
 
                         <th>Duration</th>
@@ -66,7 +66,7 @@ Course Management
                     {% for course in courses %}
 
                     <tr>
-
+                        <td>{{ forloop.counter }}</td>
                         <td>
 
                             <strong>

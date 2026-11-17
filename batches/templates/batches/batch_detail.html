@@ -291,6 +291,7 @@ Batch Details
                         <thead>
 
                             <tr>
+                                <th>#</th>
 
                                 <th>Name</th>
 
@@ -311,7 +312,7 @@ Batch Details
                             {% for student in students %}
 
                             <tr>
-
+                                <td>{{ forloop.counter }}</td>
                                 <td class="text-nowrap">
 
                                     {{ student.first_name }} {{ student.last_name }}
