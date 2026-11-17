@@ -272,55 +272,33 @@ Students
 
 
 {% if is_paginated %}
-
 <nav class="mt-4">
-
     <ul class="pagination justify-content-center">
-
         {% if page_obj.has_previous %}
-
         <li class="page-item">
-
-            <a class="page-link"
-               href="?page={{ page_obj.previous_page_number }}">
-
-                Previous
-
-            </a>
-
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}{% if request.GET.batch %}&batch={{ request.GET.batch }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">Previous</a>
         </li>
-
         {% endif %}
 
-        <li class="page-item active">
-
-            <span class="page-link">
-
-                {{ page_obj.number }}
-
-            </span>
-
-        </li>
+        {% for num in elided_page_range %}
+            {% if num == "…" %}
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% elif num == page_obj.number %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}{% if request.GET.batch %}&batch={{ request.GET.batch }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">{{ num }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
 
         {% if page_obj.has_next %}
-
         <li class="page-item">
-
-            <a class="page-link"
-               href="?page={{ page_obj.next_page_number }}">
-
-                Next
-
-            </a>
-
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}{% if request.GET.batch %}&batch={{ request.GET.batch }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">Next</a>
         </li>
-
         {% endif %}
-
     </ul>
-
 </nav>
-
 {% endif %}
 
 {% endblock %}
