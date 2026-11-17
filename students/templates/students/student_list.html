@@ -127,7 +127,7 @@ Students
                 {% for student in students %}
 
                 <tr>
-                    <td>{{ forloop.counter }}</td>
+                    <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
                     <td>
 
                         {% if student.photo %}

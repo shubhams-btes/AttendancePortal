@@ -389,12 +389,27 @@ class BulkApproveStudentsView(LoginRequiredMixin, View):
             messages.error(request, "You are not permitted to do this.")
             return redirect("students:student_list")
 
-        with transaction.atomic():
-            updated = Student.objects.filter(status="PENDING").update(status="ACTIVE")
+        pending = Student.objects.filter(status="PENDING")
+        approved = 0
+        failed = []
 
-        if updated:
-            messages.success(request, f"{updated} student(s) approved.")
-        else:
+        for student in pending:
+            if not hasattr(student, "face_profile"):
+                success, message = create_face_profile(student)
+                if not success:
+                    failed.append(f"{student.first_name} {student.last_name} ({message})")
+                    continue   # skip activation — no valid face
+                student.approved_by = request.user
+                student.approved_on = timezone.now()
+            student.status = Student.Status.ACTIVE
+            student.save()
+            approved += 1
+
+        if approved:
+            messages.success(request, f"{approved} student(s) approved.")
+        if failed:
+            messages.warning(request, f"{len(failed)} could not be approved (no detectable face): " + "; ".join(failed))
+        if not approved and not failed:
             messages.info(request, "No pending students to approve.")
 
         return redirect("students:student_list")
